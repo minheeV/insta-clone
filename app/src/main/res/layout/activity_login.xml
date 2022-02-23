@@ -37,6 +37,7 @@
             android:layout_marginHorizontal="20dp">
 
             <EditText
+                android:inputType="textPassword"
                 android:id="@+id/password_edittext"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
