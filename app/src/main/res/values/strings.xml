@@ -49,6 +49,7 @@
 
     <!-- Toolbar -->
     <string name="back">Back</string>
+    <string name="title_text">CloneSta</string>
 
     <!-- etc -->
     <item name="visible" type="id" />
