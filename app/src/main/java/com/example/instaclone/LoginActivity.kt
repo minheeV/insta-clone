@@ -47,7 +47,7 @@ class LoginActivity : AppCompatActivity() {
         getResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
                 result:ActivityResult->
             if(result.resultCode == RESULT_OK) {
-                val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)//Auth.GoogleSignInApi.getSignInResultFromIntent(result.data!!)
+                val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
                 try {
                     val account = task.getResult(ApiException::class.java)
                     firebaseAuthWithGoogle(account.idToken)

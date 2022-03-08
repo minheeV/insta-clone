@@ -70,7 +70,8 @@
             android:layout_marginBottom="5dp"
             android:background="@drawable/btn_signin_facebook"
             android:text="@string/signin_facebook"
-            android:textColor="#FFFFFF" />
+            android:textColor="#FFFFFF"
+            android:visibility="gone" />
 
         <Button
             android:id="@+id/google_sign_in_button"
