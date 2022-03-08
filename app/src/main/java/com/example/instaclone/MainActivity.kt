@@ -1,13 +1,15 @@
 package com.example.instaclone
 
+import android.Manifest
+import android.content.Intent
+import android.content.pm.PackageManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.MenuItem
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import com.example.instaclone.databinding.ActivityMainBinding
-import com.example.instaclone.navigation.AlarmFragment
-import com.example.instaclone.navigation.DetailViewFragment
-import com.example.instaclone.navigation.GridFragment
-import com.example.instaclone.navigation.UserFragment
+import com.example.instaclone.navigation.*
 import com.google.android.material.navigation.NavigationBarView
 
 class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListener {
@@ -18,6 +20,9 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         binding.bottomNavigation.setOnItemSelectedListener(this)
+
+        //사진경로 가져올수 있는 권한 요청
+        ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),1)
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
@@ -35,7 +40,9 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
                 return true
             }
             R.id.action_add_photo -> {
-
+                if(ContextCompat.checkSelfPermission(this,Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED){
+                    startActivity(Intent(this,AddPhotoActivity::class.java))
+                }
                 return true
             }
             R.id.action_favorite_alarm -> {
