@@ -83,7 +83,7 @@ class LoginActivity : AppCompatActivity() {
 
     private fun signInAndSignUp() {
         auth?.createUserWithEmailAndPassword(
-            binding.emailEdittext.text.toString(),
+            binding.emailEdittext.text.toString().trim(),
             binding.passwordEdittext.text.toString()
         )
             ?.addOnCompleteListener { task ->
@@ -101,7 +101,7 @@ class LoginActivity : AppCompatActivity() {
 
     private fun signInEmail() {
         auth?.signInWithEmailAndPassword(
-            binding.emailEdittext.text.toString(),
+            binding.emailEdittext.text.toString().trim(),
             binding.passwordEdittext.text.toString()
         )
             ?.addOnCompleteListener { task ->

@@ -23,6 +23,9 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
 
         //사진경로 가져올수 있는 권한 요청
         ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),1)
+
+        //set default screen
+        binding.bottomNavigation.selectedItemId = R.id.action_home
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
