@@ -19,8 +19,9 @@ import com.google.firebase.auth.GoogleAuthProvider
 
 class LoginActivity : AppCompatActivity() {
     lateinit var binding: ActivityLoginBinding
-    var auth: FirebaseAuth? = null
-    var googleSignInClient:GoogleSignInClient? = null
+
+    var auth: FirebaseAuth? = null // firebase 인증 라이브러리 객체
+    var googleSignInClient:GoogleSignInClient? = null // google 계정 로그인
 
     lateinit var getResult : ActivityResultLauncher<Intent>
 
@@ -38,10 +39,12 @@ class LoginActivity : AppCompatActivity() {
             googleLogin()
         }
 
+        // 사용자 ID 및 기본 프로필 정보 요청하도록 구글 로그인 구성
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestIdToken(BuildConfig.web_client_id)
-            .requestEmail()
+            .requestEmail() // 이메일 주소 요청
             .build()
+
         googleSignInClient = GoogleSignIn.getClient(this,gso)
 
         getResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
@@ -49,6 +52,7 @@ class LoginActivity : AppCompatActivity() {
             if(result.resultCode == RESULT_OK) {
                 val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
                 try {
+                    // 로그인에 성공하게 되면 구글에서는 로그인한 사용자의 정보를 얻을 때 필요한 IdToken을 전달
                     val account = task.getResult(ApiException::class.java)
                     firebaseAuthWithGoogle(account.idToken)
                     Log.d("GoogleLogin", "firebaseAuthWithGoogle: " + account.id)
@@ -61,12 +65,20 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * 구글 로그인 화면
+     */
     private fun googleLogin(){
         val signInIntent = googleSignInClient?.signInIntent
         getResult.launch(signInIntent)
     }
 
 
+    /**
+     * IdToken을 활용하여 Firebase 인증하기
+     *
+     * IdToken으로 Firebase 사용자 인증 정보로 교환을 한 후 교환된 정보를 이용해 Firebase에 인증할 수 있다.
+     */
     private fun firebaseAuthWithGoogle(account: String?){
         val credential = GoogleAuthProvider.getCredential(account,null)
         auth?.signInWithCredential(credential)
@@ -81,12 +93,15 @@ class LoginActivity : AppCompatActivity() {
             }
     }
 
+    /**
+     * 입력한 이메일과 비밀번호가 기존에 없었던 이메일이라면 createUserWithEmailAndPassword를 통해 회원가입하고
+     * 있었던 이메일이라면 signInwithEmailAndPassword를 통해 로그인 하게 된다.
+     */
     private fun signInAndSignUp() {
         auth?.createUserWithEmailAndPassword(
             binding.emailEdittext.text.toString().trim(),
             binding.passwordEdittext.text.toString()
-        )
-            ?.addOnCompleteListener { task ->
+        )?.addOnCompleteListener { task ->
                 when {
                     task.isSuccessful -> { // id 생성 성공
                         Toast.makeText(this,"회원가입 성공", Toast.LENGTH_LONG).show()
@@ -99,12 +114,14 @@ class LoginActivity : AppCompatActivity() {
             }
     }
 
+    /**
+     * 기존에 있었던 이메일이므로 로그인하게 된다.
+     */
     private fun signInEmail() {
         auth?.signInWithEmailAndPassword(
             binding.emailEdittext.text.toString().trim(),
             binding.passwordEdittext.text.toString()
-        )
-            ?.addOnCompleteListener { task ->
+        )?.addOnCompleteListener { task ->
                 if (task.isSuccessful) { //로그인 성공
                     Toast.makeText(this,"로그인 성공", Toast.LENGTH_LONG).show()
                     moveMainPage(task.result?.user)
@@ -114,6 +131,9 @@ class LoginActivity : AppCompatActivity() {
             }
     }
 
+    /**
+     * 로그인에 성공하게 되면 메인화면으로 넘어가도록 하는 함수
+     */
     private fun moveMainPage(user:FirebaseUser?){
         if(user!=null){
             startActivity(Intent(this,MainActivity::class.java))
