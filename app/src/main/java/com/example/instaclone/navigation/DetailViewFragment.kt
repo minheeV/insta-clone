@@ -1,5 +1,6 @@
 package com.example.instaclone.navigation
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -36,11 +37,16 @@ class DetailViewFragment : Fragment() {
         _binding = null
     }
 
+    /**
+     * 사용자의 ID, Profile 이미지, 업로드 한 이미지, 좋아요 버튼, 댓글 버튼, 좋아요 갯수, 글 내용에 대한 정보를 담는 recyclerview
+     */
+    @SuppressLint("NotifyDataSetChanged")
     inner class DetailViewRecyclerViewAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
-        var contentDTOs: ArrayList<ContentDTO> = arrayListOf()
-        var contentUIDList: ArrayList<String> = arrayListOf()
+        var contentDTOs: ArrayList<ContentDTO> = arrayListOf() // 업로드 내용
+        var contentUIDList: ArrayList<String> = arrayListOf() // 사용자 정보 List
         lateinit var binding: ItemDetailBinding
 
+        // 초기에 firestore에 업로드 된 정보들을 얻어서 list에 add 해준다.
         init {
             firestore?.collection("images")?.orderBy("timestamp")
                 ?.addSnapshotListener { querySnapshot, firebaseFirestorException ->

@@ -21,7 +21,7 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
         setContentView(binding.root)
         binding.bottomNavigation.setOnItemSelectedListener(this)
 
-        //사진경로 가져올수 있는 권한 요청
+        //사진경로 가져올 수 있는 권한 요청
         ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),1)
 
         //set default screen
