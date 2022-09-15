@@ -95,5 +95,9 @@ class DetailViewFragment : Fragment() {
         override fun getItemCount(): Int {
             return contentDTOs.size
         }
+
+        /*fun favoriteEvent(position: Int){
+            var tsDoc = firestore?.collection(im)
+        }*/
     }
 }
