@@ -13,11 +13,13 @@ import com.example.instaclone.R
 import com.example.instaclone.databinding.FragmentDetailBinding
 import com.example.instaclone.databinding.ItemDetailBinding
 import com.example.instaclone.navigation.model.ContentDTO
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
 class DetailViewFragment : Fragment() {
     private var _binding: FragmentDetailBinding? = null
     var firestore: FirebaseFirestore? = null
+    var uid : String? = null
     private val binding get() = _binding!!
 
     override fun onCreateView(
@@ -27,6 +29,7 @@ class DetailViewFragment : Fragment() {
     ): View {
         _binding = FragmentDetailBinding.inflate(inflater, container, false)
         firestore = FirebaseFirestore.getInstance()
+        uid = FirebaseAuth.getInstance().currentUser?.uid
         binding.detailviewfragmentRecyclerview.adapter = DetailViewRecyclerViewAdapter()
         binding.detailviewfragmentRecyclerview.layoutManager = LinearLayoutManager(activity)
         return binding.root
@@ -90,14 +93,48 @@ class DetailViewFragment : Fragment() {
             Glide.with(holder.itemView.context).load(contentDTOs[position].imageUrl)
                 .into(binding.detailviewitemProfileImage)
 
+            //This code is when the button is clicked
+            binding.detailviewitemFavoriteImageview.setOnClickListener {
+                favoriteEvent(position)
+            }
+
+            //This code is when the page is loaded
+            if(contentDTOs[position].favorites.containsKey(uid)){ // 좋아요 상태에 따라 이미지 적용
+                //This is like status
+                binding.detailviewitemFavoriteImageview.setImageResource(R.drawable.ic_favorite)
+            }else{
+                //This is unlike status
+                binding.detailviewitemFavoriteImageview.setImageResource(R.drawable.ic_favorite_border)
+            }
+
         }
 
         override fun getItemCount(): Int {
             return contentDTOs.size
         }
 
-        /*fun favoriteEvent(position: Int){
-            var tsDoc = firestore?.collection(im)
-        }*/
+        /**
+         * 좋아요 시 실행할 이벤트
+         */
+        private fun favoriteEvent(position: Int) {
+            val tsDoc = firestore?.collection("images")
+                ?.document(contentUIDList[position]) // images collection에서 원하는 uid의 document에 대한 정보
+            // 데이터를 저장하기 위해 transaction 사용
+            firestore?.runTransaction { transaction ->
+                uid = FirebaseAuth.getInstance().currentUser?.uid // uid 값 가져옴
+                val contentDTO = transaction.get(tsDoc!!) // 해당 document 받아오기
+                    .toObject(ContentDTO::class.java)//트랜젝션의 데이터를 ContentDTO로 캐스팅
+                if (contentDTO!!.favorites.containsKey(uid)) { //좋아요 버튼이 이미 클릭 되어있으면 -> favorites 값이 true이면
+                    //When the button is clicked
+                    contentDTO.favoriteCount = contentDTO.favoriteCount - 1
+                    contentDTO.favorites.remove(uid);
+                } else {
+                    //When the button is not clicked
+                    contentDTO.favoriteCount = contentDTO.favoriteCount + 1
+                    contentDTO.favorites[uid!!] = true
+                }
+                transaction.set(tsDoc,contentDTO) // 해당 document에 Dto 객체 저장 , 트랜젝션을 다시 서버로 돌려줌
+            }
+        }
     }
 }
