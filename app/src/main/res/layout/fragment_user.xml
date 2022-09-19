@@ -1,7 +1,84 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:background="#DD4488"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <ImageView
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:id="@+id/account_iv_profile"
+        android:src="@drawable/ic_account"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"/>
+
+    <TextView
+        android:id="@+id/account_tv_post"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/post"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toEndOf="@id/account_iv_profile"
+        />
+
+    <TextView
+        android:id="@+id/account_tv_post_count"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/count_0"
+        app:layout_constraintTop_toBottomOf="@id/account_tv_post"
+        app:layout_constraintStart_toStartOf="@id/account_tv_post"
+        />
+
+    <TextView
+        android:id="@+id/account_tv_follower"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/follower"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toEndOf="@id/account_tv_post"
+        />
+
+    <TextView
+        android:id="@+id/account_tv_follower_count"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/count_0"
+        app:layout_constraintTop_toBottomOf="@id/account_tv_follower"
+        app:layout_constraintStart_toStartOf="@id/account_tv_follower"
+        />
+
+    <TextView
+        android:id="@+id/account_tv_following"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/following"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toEndOf="@id/account_tv_follower"
+        />
+
+    <TextView
+        android:id="@+id/account_tv_following_count"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/count_0"
+        app:layout_constraintTop_toBottomOf="@id/account_tv_following"
+        app:layout_constraintStart_toStartOf="@id/account_tv_following"
+        />
+
+    <Button
+        android:id="@+id/account_btn_follow_signout"
+        android:layout_width="0dp"
+        android:layout_height="40dp"
+        android:text="@string/follow"
+        app:layout_constraintStart_toEndOf="@id/account_iv_profile"
+        app:layout_constraintTop_toBottomOf="@id/account_tv_post_count"
+        />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/account_recyclerview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/account_iv_profile"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

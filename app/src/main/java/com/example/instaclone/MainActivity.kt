@@ -11,6 +11,7 @@ import androidx.core.content.ContextCompat
 import com.example.instaclone.databinding.ActivityMainBinding
 import com.example.instaclone.navigation.*
 import com.google.android.material.navigation.NavigationBarView
+import com.google.firebase.auth.FirebaseAuth
 
 class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListener {
     lateinit var binding: ActivityMainBinding
@@ -59,8 +60,13 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
             }
             R.id.action_account -> {
                 val userFragment = UserFragment()
+                var bundle = Bundle()
+                var uid = FirebaseAuth.getInstance().currentUser?.uid
+                bundle.putString("destinationUid", uid)
+                userFragment.arguments = bundle
                 supportFragmentManager.beginTransaction()
                     .replace(R.id.main_content, userFragment).commit()
+
                 return true
             }
         }
