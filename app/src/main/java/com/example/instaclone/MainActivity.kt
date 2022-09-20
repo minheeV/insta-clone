@@ -6,6 +6,7 @@ import android.content.pm.PackageManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.MenuItem
+import android.view.View
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.example.instaclone.databinding.ActivityMainBinding
@@ -32,7 +33,10 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
     /**
      * navigationItemSelect 이벤트로 FragmentManager의 replace()함수를 통해 화면 전환을 해준다.
      */
+
+    //TODO 220920 상세페이지 2 이미지를 올리지 않은 아이디로 로그인
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
+        setToolbarDefault()
         when (item.itemId) {
             R.id.action_home -> {
                 val detailViewFragment = DetailViewFragment()
@@ -71,6 +75,12 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
             }
         }
         return false
+    }
+
+    fun setToolbarDefault(){
+        binding.toolbarUsername.visibility = View.GONE
+        binding.toolbarBtnBack.visibility = View.GONE
+        binding.toolbarTitleText.visibility = View.VISIBLE
     }
 
 

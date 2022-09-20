@@ -1,5 +1,6 @@
 package com.example.instaclone.navigation
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -11,17 +12,22 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
+import com.example.instaclone.LoginActivity
+import com.example.instaclone.MainActivity
+import com.example.instaclone.R
 import com.example.instaclone.databinding.FragmentUserBinding
 import com.example.instaclone.navigation.model.ContentDTO
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
+//내 계정, 상대방 계정
 class UserFragment : Fragment() {
     private var _binding: FragmentUserBinding? = null
     private val binding get() = _binding!!
     var fireStore: FirebaseFirestore? = null
     var uid: String? = null
     var auth: FirebaseAuth? = null
+    var currentUserUid : String? = null // 내계정인지 상대방 계정인지 판단
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -32,6 +38,29 @@ class UserFragment : Fragment() {
         uid = arguments?.getString("destinationUid")
         fireStore = FirebaseFirestore.getInstance()
         auth = FirebaseAuth.getInstance()
+        currentUserUid = auth?.currentUser?.uid
+
+        if(uid == currentUserUid){
+            //MyPage
+            binding.accountBtnFollowSignout.text = getString(R.string.signout)
+            binding.accountBtnFollowSignout.setOnClickListener { // 액티비티 종료 및 login 액티비티 이동, firebase outh 값에 signout
+                activity?.finish()
+                startActivity(Intent(activity,LoginActivity::class.java))
+                auth?.signOut()
+            }
+        }else{
+            //OtherUserPage
+            binding.accountBtnFollowSignout.text = getString(R.string.follow)
+            val mainActivity = (activity as MainActivity) //누구의 유저 페이지인지 텍스트 백버튼 활성화
+            mainActivity.binding.toolbarUsername.text = arguments?.getString("userId")
+            mainActivity.binding.toolbarBtnBack.setOnClickListener {  // 뒤로가기 이벤트
+                mainActivity.binding.bottomNavigation.selectedItemId = R.id.action_home
+            }
+            mainActivity.binding.toolbarTitleText.visibility = View.GONE
+            mainActivity.binding.toolbarUsername.visibility = View.VISIBLE
+            mainActivity.binding.toolbarBtnBack.visibility = View.VISIBLE
+        }
+
 
         binding.accountRecyclerview.adapter = UserFragmentRecyclerViewAdapter()
         binding.accountRecyclerview.layoutManager = GridLayoutManager(requireActivity(), 3)

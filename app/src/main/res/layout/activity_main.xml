@@ -17,6 +17,7 @@
             android:layout_height="match_parent">
 
             <TextView
+                android:id="@+id/toolbar_title_text"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:fontFamily="@font/bmyeonsung"
@@ -24,6 +25,26 @@
                 android:text="@string/title_text"
                 android:textColor="@color/black"
                 android:textSize="20sp" />
+
+            <ImageView
+                android:id="@+id/toolbar_btn_back"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:layout_marginStart="22dp"
+                android:src="@drawable/ic_arrow_back"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/toolbar_username"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="UserID"
+                android:textColor="@color/colorNavIcon"
+                android:textSize="16sp"
+                app:layout_constraintStart_toEndOf="@id/toolbar_btn_back" />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.appcompat.widget.Toolbar>
 

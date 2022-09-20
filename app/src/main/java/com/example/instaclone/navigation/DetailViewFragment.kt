@@ -52,10 +52,11 @@ class DetailViewFragment : Fragment() {
         // 초기에 firestore에 업로드 된 정보들을 얻어서 list에 add 해준다.
         init {
             firestore?.collection("images")?.orderBy("timestamp")
-                ?.addSnapshotListener { querySnapshot, firebaseFirestorException ->
+                ?.addSnapshotListener { querySnapshot, firebaseFirestoreException ->
                     contentDTOs.clear()
                     contentUIDList.clear()
-                    for (snapshot in querySnapshot!!.documents) {
+                    if(querySnapshot == null) return@addSnapshotListener
+                    for (snapshot in querySnapshot.documents) {
                         var item = snapshot.toObject(ContentDTO::class.java)
                         contentDTOs.add(item!!)
                         contentUIDList.add(snapshot.id)
@@ -105,6 +106,15 @@ class DetailViewFragment : Fragment() {
             }else{
                 //This is unlike status
                 binding.detailviewitemFavoriteImageview.setImageResource(R.drawable.ic_favorite_border)
+            }
+        //프로파일 이미지 클릭하면 상대방 유저 정보로 이동
+            binding.detailviewitemProfileImage.setOnClickListener {
+                var fragment = UserFragment()
+                var bundle = Bundle()
+                bundle.putString("destinationUid", contentDTOs[position].uid)
+                bundle.putString("userId", contentDTOs[position].userId)
+                fragment.arguments = bundle
+                activity?.supportFragmentManager?.beginTransaction()?.replace(R.id.main_content,fragment)?.commit()
             }
 
         }

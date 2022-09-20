@@ -65,6 +65,12 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
+    //자동 로그인 기능
+    override fun onStart() {
+        super.onStart()
+        moveMainPage(auth?.currentUser)
+    }
+
     /**
      * 구글 로그인 화면
      */
