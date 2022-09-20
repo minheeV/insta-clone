@@ -7,15 +7,22 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
+import androidx.activity.result.ActivityResultLauncher
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.example.instaclone.databinding.ActivityMainBinding
 import com.example.instaclone.navigation.*
+import com.google.android.gms.tasks.Task
 import com.google.android.material.navigation.NavigationBarView
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.UploadTask
 
 class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListener {
     lateinit var binding: ActivityMainBinding
+
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -77,11 +84,9 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
         return false
     }
 
-    fun setToolbarDefault(){
+    private fun setToolbarDefault(){
         binding.toolbarUsername.visibility = View.GONE
         binding.toolbarBtnBack.visibility = View.GONE
         binding.toolbarTitleText.visibility = View.VISIBLE
     }
-
-
 }
