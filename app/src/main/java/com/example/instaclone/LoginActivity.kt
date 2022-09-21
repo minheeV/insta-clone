@@ -82,7 +82,6 @@ class LoginActivity : AppCompatActivity() {
 
     /**
      * IdToken을 활용하여 Firebase 인증하기
-     *
      * IdToken으로 Firebase 사용자 인증 정보로 교환을 한 후 교환된 정보를 이용해 Firebase에 인증할 수 있다.
      */
     private fun firebaseAuthWithGoogle(account: String?){

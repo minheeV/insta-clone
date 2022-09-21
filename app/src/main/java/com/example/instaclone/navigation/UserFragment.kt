@@ -195,7 +195,7 @@ class UserFragment : Fragment() {
     /**
      * 올린 이미지를 다운로드 받는 함수
      */
-    fun getProfileImage() {
+    private fun getProfileImage() {
         //실시간 변화 체크 snapshot
         fireStore?.collection("profileImages")?.document(uid!!)
             ?.addSnapshotListener { documentSnapshot, firebaseFirestoreException ->
