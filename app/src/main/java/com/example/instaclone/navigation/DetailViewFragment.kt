@@ -109,8 +109,8 @@ class DetailViewFragment : Fragment() {
             }
         //프로파일 이미지 클릭하면 상대방 유저 정보로 이동
             binding.detailviewitemProfileImage.setOnClickListener {
-                var fragment = UserFragment()
-                var bundle = Bundle()
+                val fragment = UserFragment()
+                val bundle = Bundle()
                 bundle.putString("destinationUid", contentDTOs[position].uid)
                 bundle.putString("userId", contentDTOs[position].userId)
                 fragment.arguments = bundle

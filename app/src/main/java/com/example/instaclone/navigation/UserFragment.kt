@@ -78,7 +78,7 @@ class UserFragment : Fragment() {
         if (uid == currentUserUid) {
             //MyPage
             binding.accountBtnFollowSignout.text = getString(R.string.signout)
-            binding.accountBtnFollowSignout.setOnClickListener { // 액티비티 종료 및 login 액티비티 이동, firebase outh 값에 signout
+            binding.accountBtnFollowSignout.setOnClickListener { // 액티비티 종료 및 login 액티비티 이동, firebase auth 값에 signOut
                 activity?.finish()
                 startActivity(Intent(activity, LoginActivity::class.java))
                 auth?.signOut()
@@ -241,11 +241,10 @@ class UserFragment : Fragment() {
 
         inner class CustomViewHolder(var imageview: ImageView) :
             RecyclerView.ViewHolder(imageview) {
-
         }
 
         override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-            var imageView = (holder as CustomViewHolder).imageview
+            val imageView = (holder as CustomViewHolder).imageview
             Glide.with(holder.itemView.context).load(contentDTOs[position].imageUrl)
                 .apply(RequestOptions().centerCrop()).into(imageView)
         }
