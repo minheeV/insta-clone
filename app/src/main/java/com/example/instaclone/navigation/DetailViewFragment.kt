@@ -1,6 +1,7 @@
 package com.example.instaclone.navigation
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -116,6 +117,13 @@ class DetailViewFragment : Fragment() {
                 fragment.arguments = bundle
                 activity?.supportFragmentManager?.beginTransaction()?.replace(R.id.main_content,fragment)?.commit()
             }
+
+            binding.detailviewitemCommentImageview.setOnClickListener {
+                var intent = Intent(it.context, CommentActivity::class.java)
+                intent.putExtra("contentUid", contentUIDList[position]) // 인텐트 안에 컨텐트 내가 선택한 이미지의 uid넘겨줌
+                startActivity(intent)
+            }
+
 
         }
 
