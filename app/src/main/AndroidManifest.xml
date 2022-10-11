@@ -13,7 +13,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.InstaCloneTheme">
         <activity
-            android:name=".CommentActivity"
+            android:name=".navigation.CommentActivity"
             android:exported="false" />
         <activity
             android:name=".navigation.AddPhotoActivity"

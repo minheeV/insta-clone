@@ -16,7 +16,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <TextView
+            <!--<TextView
                 android:id="@+id/toolbar_title_text"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -24,7 +24,14 @@
                 android:gravity="center"
                 android:text="@string/title_text"
                 android:textColor="@color/black"
-                android:textSize="20sp" />
+                android:textSize="20sp" />-->
+
+            <ImageView
+                android:id="@+id/toolbar_title_image"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:src="@drawable/logo_title"/>
 
             <ImageView
                 android:id="@+id/toolbar_btn_back"

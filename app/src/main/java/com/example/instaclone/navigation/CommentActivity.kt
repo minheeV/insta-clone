@@ -20,8 +20,8 @@ import com.google.firebase.firestore.FirebaseFirestore
 
 class CommentActivity : AppCompatActivity() {
     private lateinit var binding: ActivityCommentBinding
-    var contentUid : String? = null
-    var destinationUid : String? = null
+    var contentUid: String? = null
+    var destinationUid: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,7 +54,7 @@ class CommentActivity : AppCompatActivity() {
     }
 
     //커멘트 달았을 때 알려주는 커멘트 알림 함수
-    fun commentAlarm(destinationUid : String, message : String){
+    fun commentAlarm(destinationUid: String, message: String) {
         var alarmDTO = AlarmDTO()
         alarmDTO.destinationUid = destinationUid
         alarmDTO.userId = FirebaseAuth.getInstance().currentUser?.email
@@ -64,9 +64,11 @@ class CommentActivity : AppCompatActivity() {
         alarmDTO.timestamp = System.currentTimeMillis()
         FirebaseFirestore.getInstance().collection("alarms").document().set(alarmDTO)
     }
-    inner class  CommentRecyclerviewAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>(){
-        var comments : ArrayList<ContentDTO.Comment> = arrayListOf()
-        private lateinit var commentBinding : ItemCommentBinding
+
+    inner class CommentRecyclerviewAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+        var comments: ArrayList<ContentDTO.Comment> = arrayListOf()
+        private lateinit var commentBinding: ItemCommentBinding
+
         init {
             FirebaseFirestore.getInstance()
                 .collection("images")
@@ -75,19 +77,22 @@ class CommentActivity : AppCompatActivity() {
                 .orderBy("timestamp")
                 .addSnapshotListener { querySnapshot, firebaseFirestoreException ->
                     comments.clear()
-                    if(querySnapshot == null) return@addSnapshotListener
-                    for(snapshot in querySnapshot.documents!!){
+                    if (querySnapshot == null) return@addSnapshotListener
+                    for (snapshot in querySnapshot.documents!!) {
                         comments.add(snapshot.toObject(ContentDTO.Comment::class.java)!!)
                     }
                     notifyDataSetChanged()
                 }
         }
+
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-            commentBinding = ItemCommentBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+            commentBinding =
+                ItemCommentBinding.inflate(LayoutInflater.from(parent.context), parent, false)
             return CustomViewHolder(commentBinding)
         }
 
-        private inner class CustomViewHolder(view: ItemCommentBinding) :  RecyclerView.ViewHolder(binding.root)
+        private inner class CustomViewHolder(view: ItemCommentBinding) :
+            RecyclerView.ViewHolder(view.root)
 
         override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
             commentBinding.commentviewitemTextviewComment.text = comments[position].comment
@@ -98,9 +103,11 @@ class CommentActivity : AppCompatActivity() {
                 .document(comments[position].uid!!)
                 .get()
                 .addOnCompleteListener { task ->
-                    if(task.isSuccessful){
+                    if (task.isSuccessful) {
                         var url = task.result!!["image"]// url주소 받아옴
-                        Glide.with(holder.itemView.context).load(url).apply(RequestOptions().circleCrop()).into(commentBinding.commentviewitemImageviewProfile)
+                        Glide.with(holder.itemView.context).load(url)
+                            .apply(RequestOptions().circleCrop())
+                            .into(commentBinding.commentviewitemImageviewProfile)
                     }
                 }
 

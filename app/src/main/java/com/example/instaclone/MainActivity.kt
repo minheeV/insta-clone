@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
+import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -22,17 +23,23 @@ import com.google.firebase.storage.UploadTask
 class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListener {
     lateinit var binding: ActivityMainBinding
 
+    lateinit var getResult: ActivityResultLauncher<Intent>
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
         binding.bottomNavigation.setOnItemSelectedListener(this)
-
-        //사진경로 가져올 수 있는 권한 요청
-        ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),1)
-
         //set default screen
         binding.bottomNavigation.selectedItemId = R.id.action_home
+
+        //사진경로 가져올 수 있는 권한 요청
+        ActivityCompat.requestPermissions(
+            this,
+            arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),
+            1
+        )
     }
 
     /**
@@ -56,8 +63,14 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
                 return true
             }
             R.id.action_add_photo -> {
-                if(ContextCompat.checkSelfPermission(this,Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED){
-                    startActivity(Intent(this,AddPhotoActivity::class.java))
+                if (ContextCompat.checkSelfPermission(
+                        this,
+                        Manifest.permission.READ_EXTERNAL_STORAGE
+                    ) == PackageManager.PERMISSION_GRANTED
+                ) {
+                    startActivity(Intent(this, AddPhotoActivity::class.java))
+                } else {
+                    Toast.makeText(this, "스토리지 읽기 권한이 없습니다.", Toast.LENGTH_LONG).show()
                 }
                 return true
             }
@@ -82,9 +95,9 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
         return false
     }
 
-    private fun setToolbarDefault(){
+    private fun setToolbarDefault() {
         binding.toolbarUsername.visibility = View.GONE
         binding.toolbarBtnBack.visibility = View.GONE
-        binding.toolbarTitleText.visibility = View.VISIBLE
+        binding.toolbarTitleImage.visibility = View.VISIBLE
     }
 }

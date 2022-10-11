@@ -24,10 +24,12 @@ import java.util.*
 class AddPhotoActivity : AppCompatActivity() {
     private lateinit var binding: ActivityAddPhotoBinding
 
+    val PICK_IMAGE_FROM_ALBUM = 0
+
     var storage: FirebaseStorage? = null
     var photoUri: Uri? = null
-    var auth : FirebaseAuth? = null // 유저 정보 가져오기
-    var firebaseStore : FirebaseFirestore? = null // firebase 데이터베이스 사용
+    var auth: FirebaseAuth? = null // 유저 정보 가져오기
+    var firebaseStore: FirebaseFirestore? = null // firebase 데이터베이스 사용
     private lateinit var getResult: ActivityResultLauncher<Intent>
 
 
@@ -39,11 +41,12 @@ class AddPhotoActivity : AppCompatActivity() {
         // 성공했을 때 ( = 사진을 선택했을 때) 선택한 이미지 경로가 전달된다.
         getResult =
             registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
+
                 if (result.resultCode == RESULT_OK) {
                     //이미지 경로 넘어옴
                     photoUri = result.data?.data
                     binding.addphotoImage.setImageURI(photoUri)
-                }else{
+                } else {
                     //취소버튼
                     finish()
                 }
@@ -58,6 +61,12 @@ class AddPhotoActivity : AppCompatActivity() {
         photoPickIntent.type = "image/*"
         getResult.launch(photoPickIntent)
 
+        binding.addphotoImage.setOnClickListener {
+            val photoPickIntent2 = Intent(Intent.ACTION_PICK) // 선택한 이미지를 가져올 수 있도록 생성
+            photoPickIntent2.type = "image/*"
+            getResult.launch(photoPickIntent2)
+        }
+
         binding.addphotoBtnUpload.setOnClickListener {
             contentUpload()
         }
@@ -71,10 +80,10 @@ class AddPhotoActivity : AppCompatActivity() {
      * 정상적으로 창이 닫혔다는 플래그 값을 넘겨주기 위해 RESULT_OK를 사용
      */
     @SuppressLint("SimpleDateFormat")
-    private fun contentUpload(){
+    private fun contentUpload() {
         //파일 이름 생성 : 이미지 이름이 중복되지 않도록 파일명에 날짜값을 넣어서 지정한다
         val timestamp = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
-        val imageFileName = "IMAGE_"+ timestamp + "_.png"
+        val imageFileName = "IMAGE_" + timestamp + "_.png"
 
         val storageRef = storage?.reference?.child("images")?.child(imageFileName)
 
@@ -101,22 +110,22 @@ class AddPhotoActivity : AppCompatActivity() {
         }*/
 
         //파일 업로드 2. 프라미스 방식
-        storageRef?.putFile(photoUri!!)?.continueWithTask { task: Task<UploadTask.TaskSnapshot>->
+        storageRef?.putFile(photoUri!!)?.continueWithTask { task: Task<UploadTask.TaskSnapshot> ->
             return@continueWithTask storageRef.downloadUrl
-        }?.addOnSuccessListener { uri->
+        }?.addOnSuccessListener { uri ->
             var contentDTO = ContentDTO()
             contentDTO.imageUrl = uri.toString()
 
             contentDTO.uid = auth?.currentUser?.uid
             contentDTO.userId = auth?.currentUser?.email
             contentDTO.explain = binding.addphotoEditExplain.text.toString()
-            contentDTO.timestamp= System.currentTimeMillis()
+            contentDTO.timestamp = System.currentTimeMillis()
 
             firebaseStore?.collection("images")?.document()?.set(contentDTO) // 데이터베이스에 입력
             setResult(Activity.RESULT_OK)
             finish()
-                        //파일 업로드가 성공한 걸 알 수 있도록 토스트 팝업
-            Toast.makeText(this,getString(R.string.upload_success),Toast.LENGTH_LONG).show()
+            //파일 업로드가 성공한 걸 알 수 있도록 토스트 팝업
+            Toast.makeText(this, getString(R.string.upload_success), Toast.LENGTH_LONG).show()
         }
 
     }

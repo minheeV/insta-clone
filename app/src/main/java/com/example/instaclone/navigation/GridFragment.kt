@@ -12,23 +12,25 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
+import com.example.instaclone.R
 import com.example.instaclone.databinding.FragmentGridBinding
 import com.example.instaclone.navigation.model.ContentDTO
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ListenerRegistration
 
 // TODO 리사이클러뷰 만들어줄 예정이지만 유저 프레그먼트와 동일
 class GridFragment : Fragment() {
-     private var _binding : FragmentGridBinding? = null
-     private val binding get() = _binding!!
+    lateinit var binding: FragmentGridBinding
 
-    var fireStore : FirebaseFirestore? = null
+    var imagesSnapshot: ListenerRegistration? = null
+    var fireStore: FirebaseFirestore? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentGridBinding.inflate(inflater,container,false)
+        binding = FragmentGridBinding.inflate(inflater, container, false)
         fireStore = FirebaseFirestore.getInstance()
 
         binding.gridfragmentRecyclerview.adapter = UserFragmentRecyclerViewAdapter()
@@ -37,12 +39,17 @@ class GridFragment : Fragment() {
         return binding.root
     }
 
+    override fun onStop() {
+        super.onStop()
+        imagesSnapshot?.remove()
+    }
+
     @SuppressLint("NotifyDataSetChanged")
     inner class UserFragmentRecyclerViewAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         var contentDTOs: ArrayList<ContentDTO> = arrayListOf()
 
         init {
-            fireStore?.collection("images")
+            imagesSnapshot = fireStore?.collection("images")
                 ?.addSnapshotListener { querySnapshot, firebaseFirestoreException ->
                     if (querySnapshot == null) return@addSnapshotListener
                     //Get data
@@ -68,16 +75,24 @@ class GridFragment : Fragment() {
             val imageView = (holder as CustomViewHolder).imageview
             Glide.with(holder.itemView.context).load(contentDTOs[position].imageUrl)
                 .apply(RequestOptions().centerCrop()).into(imageView)
+
+            imageView.setOnClickListener {
+                val fragment = UserFragment()
+                val bundle = Bundle()
+
+                bundle.putString("destinationUid", contentDTOs[position].uid)
+                bundle.putString("userId", contentDTOs[position].userId)
+
+                fragment.arguments = bundle
+                activity!!.supportFragmentManager.beginTransaction()
+                    .replace(R.id.main_content, fragment)
+                    .commit()
+            }
         }
 
         override fun getItemCount(): Int {
             return contentDTOs.size
 
         }
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
     }
 }

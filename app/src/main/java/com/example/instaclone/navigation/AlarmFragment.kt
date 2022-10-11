@@ -18,15 +18,14 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 
 class AlarmFragment : Fragment() {
-    private var _binding: FragmentAlarmBinding? = null
-    private val binding get() = _binding!!
+    lateinit var binding: FragmentAlarmBinding
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentAlarmBinding.inflate(inflater, container, false)
+        binding = FragmentAlarmBinding.inflate(inflater, container, false)
         binding.alarmfragmentRecyclerview.adapter = AlarmRecyclerviewAdapter()
         binding.alarmfragmentRecyclerview.layoutManager = LinearLayoutManager(activity)
         return binding.root
@@ -74,17 +73,18 @@ class AlarmFragment : Fragment() {
                 }
             when (alarmDTOList[position].kind) {
                 0 -> {
-                    var str_0 = alarmDTOList[position].userId + getString(R.string.alarm_favorite)
+                    var str_0 =
+                        alarmDTOList[position].userId + activity?.resources?.getString(R.string.alarm_favorite)
                     binding.commentviewitemTextviewProfile.text = str_0
                 }//좋아요 이벤트 알람
                 1 -> {
                     var str_1 = alarmDTOList[position].userId + " " +
-                            getString(R.string.alarm_comment) + " of " + alarmDTOList[position].message
+                            activity?.resources?.getString(R.string.alarm_comment) + " of " + alarmDTOList[position].message
                     binding.commentviewitemTextviewProfile.text = str_1
                 }//코멘트 이벤트 알람
                 2 -> {
                     var str_2 =
-                        alarmDTOList[position].userId + " " + getString(R.string.alarm_follow)
+                        alarmDTOList[position].userId + " " + activity?.resources?.getString(R.string.alarm_follow)
                     binding.commentviewitemTextviewProfile.text = str_2
                 }//팔로우 이벤트 알람
             }
@@ -95,10 +95,5 @@ class AlarmFragment : Fragment() {
             return alarmDTOList.size
         }
 
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
     }
 }
