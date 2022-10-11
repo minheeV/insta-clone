@@ -13,6 +13,7 @@ import com.bumptech.glide.Glide
 import com.example.instaclone.R
 import com.example.instaclone.databinding.FragmentDetailBinding
 import com.example.instaclone.databinding.ItemDetailBinding
+import com.example.instaclone.navigation.model.AlarmDTO
 import com.example.instaclone.navigation.model.ContentDTO
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -121,6 +122,7 @@ class DetailViewFragment : Fragment() {
             binding.detailviewitemCommentImageview.setOnClickListener {
                 var intent = Intent(it.context, CommentActivity::class.java)
                 intent.putExtra("contentUid", contentUIDList[position]) // 인텐트 안에 컨텐트 내가 선택한 이미지의 uid넘겨줌
+                intent.putExtra("destinationUid", contentDTOs[position].uid)
                 startActivity(intent)
             }
 
@@ -150,9 +152,20 @@ class DetailViewFragment : Fragment() {
                     //When the button is not clicked
                     contentDTO.favoriteCount = contentDTO.favoriteCount + 1
                     contentDTO.favorites[uid!!] = true
+                    favoriteAlarm(contentDTOs[position].uid!!) // 카운트 올라감
                 }
                 transaction.set(tsDoc,contentDTO) // 해당 document에 Dto 객체 저장 , 트랜젝션을 다시 서버로 돌려줌
             }
+        }
+
+        fun favoriteAlarm(destinationUid : String){
+            var alarmDTO = AlarmDTO()
+            alarmDTO.destinationUid = destinationUid
+            alarmDTO.userId = FirebaseAuth.getInstance().currentUser?.email
+            alarmDTO.uid = FirebaseAuth.getInstance().currentUser?.uid
+            alarmDTO.kind = 0
+            alarmDTO.timestamp = System.currentTimeMillis()
+            FirebaseFirestore.getInstance().collection("alarms").document().set(alarmDTO)
         }
     }
 }

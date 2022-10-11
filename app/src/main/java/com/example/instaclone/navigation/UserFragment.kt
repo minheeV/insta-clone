@@ -26,6 +26,7 @@ import com.example.instaclone.LoginActivity
 import com.example.instaclone.MainActivity
 import com.example.instaclone.R
 import com.example.instaclone.databinding.FragmentUserBinding
+import com.example.instaclone.navigation.model.AlarmDTO
 import com.example.instaclone.navigation.model.ContentDTO
 import com.example.instaclone.navigation.model.FollowDTO
 import com.google.firebase.auth.FirebaseAuth
@@ -146,6 +147,7 @@ class UserFragment : Fragment() {
                 followDTO = FollowDTO()
                 followDTO!!.followerCount = 1
                 followDTO!!.followers[currentUserUid!!] = true
+                followAlarm(uid!!)
 
                 transaction.set(tsDocFollower, followDTO!!)
                 return@runTransaction
@@ -156,6 +158,7 @@ class UserFragment : Fragment() {
             } else {
                 followDTO!!.followerCount = followDTO!!.followerCount + 1
                 followDTO!!.followers[currentUserUid!!] = true //상대방 uid 제거
+                followAlarm(uid!!)
             }
             transaction.set(tsDocFollower, followDTO!!)
             return@runTransaction
@@ -190,6 +193,16 @@ class UserFragment : Fragment() {
                     }
                 }
             } // 내페이지 클릭햇을 땐 내 uid, 상대방 클릭할 시 상대방 uid
+    }
+
+    fun followAlarm(destinationUid : String){
+        var alarmDTO = AlarmDTO()
+        alarmDTO.destinationUid = destinationUid
+        alarmDTO.userId = auth?.currentUser?.email
+        alarmDTO.uid = auth?.currentUser?.uid
+        alarmDTO.kind = 2
+        alarmDTO.timestamp = System.currentTimeMillis()
+        FirebaseFirestore.getInstance().collection("alarms").document().set(alarmDTO)
     }
 
     /**

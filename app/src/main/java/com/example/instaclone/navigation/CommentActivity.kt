@@ -13,6 +13,7 @@ import com.bumptech.glide.request.RequestOptions
 import com.example.instaclone.R
 import com.example.instaclone.databinding.ActivityCommentBinding
 import com.example.instaclone.databinding.ItemCommentBinding
+import com.example.instaclone.navigation.model.AlarmDTO
 import com.example.instaclone.navigation.model.ContentDTO
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -20,12 +21,14 @@ import com.google.firebase.firestore.FirebaseFirestore
 class CommentActivity : AppCompatActivity() {
     private lateinit var binding: ActivityCommentBinding
     var contentUid : String? = null
+    var destinationUid : String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityCommentBinding.inflate(layoutInflater)
         setContentView(binding.root)
         contentUid = intent.getStringExtra("contentUid")
+        destinationUid = intent.getStringExtra("destinationUid")
 
         binding.commentRecyclerview.adapter = CommentRecyclerviewAdapter()
         binding.commentRecyclerview.layoutManager = LinearLayoutManager(this)
@@ -43,12 +46,23 @@ class CommentActivity : AppCompatActivity() {
                 .collection("comments")
                 .document()
                 .set(comment)
-
+            //커멘트 받는 부분
+            commentAlarm(destinationUid!!, binding.commentEditMessage.text.toString())
             binding.commentEditMessage.setText("") // 보내고 나서 edit 초기화
 
         }
     }
 
+    //커멘트 달았을 때 알려주는 커멘트 알림 함수
+    fun commentAlarm(destinationUid : String, message : String){
+        var alarmDTO = AlarmDTO()
+        alarmDTO.destinationUid = destinationUid
+        alarmDTO.userId = FirebaseAuth.getInstance().currentUser?.email
+        alarmDTO.uid = FirebaseAuth.getInstance().currentUser?.uid
+        alarmDTO.message = message
+        alarmDTO.timestamp = System.currentTimeMillis()
+        FirebaseFirestore.getInstance().collection("alarms").document().set(alarmDTO)
+    }
     inner class  CommentRecyclerviewAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>(){
         var comments : ArrayList<ContentDTO.Comment> = arrayListOf()
         private lateinit var commentBinding : ItemCommentBinding
