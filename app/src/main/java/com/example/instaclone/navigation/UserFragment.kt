@@ -194,7 +194,7 @@ class UserFragment : Fragment() {
             ?.addSnapshotListener { documentSnapshot, firebaseFirestoreException ->
                 val followDTO =
                     documentSnapshot?.toObject(FollowDTO::class.java) ?: return@addSnapshotListener
-                binding.accountTvFollowingCount.text = followDTO.followerCount.toString()
+                binding.accountTvFollowerCount.text = followDTO.followerCount.toString()
                 if (followDTO.followers.containsKey(currentUserUid!!)) {// 팔로워 하고있으면 버튼 반환
                     binding.accountBtnFollowSignout.text =
                         activity?.resources?.getString(R.string.follow_cancel)

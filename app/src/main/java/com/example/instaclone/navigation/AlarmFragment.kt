@@ -1,6 +1,7 @@
 package com.example.instaclone.navigation
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -26,7 +27,9 @@ class AlarmFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentAlarmBinding.inflate(inflater, container, false)
+
         binding.alarmfragmentRecyclerview.adapter = AlarmRecyclerviewAdapter()
+        Log.d("민희", "AlarmRecyclerviewAdapter bidn")
         binding.alarmfragmentRecyclerview.layoutManager = LinearLayoutManager(activity)
         return binding.root
     }
@@ -36,7 +39,10 @@ class AlarmFragment : Fragment() {
         lateinit var binding: ItemCommentBinding
 
         init {
+            Log.d("민희", "init bidn")
             var uid = FirebaseAuth.getInstance().currentUser?.uid
+            Log.d("민희", "init bidn $uid")
+
             FirebaseFirestore.getInstance() //나에게 도착한 메세지만 필터링
                 .collection("alarms")
                 .whereEqualTo("destinationUid", uid)
@@ -47,12 +53,15 @@ class AlarmFragment : Fragment() {
                     for (snapshot in querySnapshot.documents) {
                         alarmDTOList.add(snapshot.toObject(AlarmDTO::class.java)!!)
                     }
+                    alarmDTOList.sortByDescending { it.timestamp }
                     notifyDataSetChanged()
                 }
         }
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
             binding = ItemCommentBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+            Log.d("민희", "onCreateViewHolder bidn")
+
             return CustomViewHolder(binding)
         }
 
@@ -60,6 +69,7 @@ class AlarmFragment : Fragment() {
             RecyclerView.ViewHolder(binding.root)
 
         override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+            Log.d("민희", "recyclerview bidn")
             FirebaseFirestore.getInstance().collection("profilesImages")
                 .document(alarmDTOList[position].uid!!)
                 .get().addOnCompleteListener {
@@ -92,6 +102,7 @@ class AlarmFragment : Fragment() {
         }
 
         override fun getItemCount(): Int {
+            Log.d("민희", "getItemCount bidn : ${alarmDTOList.size}")
             return alarmDTOList.size
         }
 

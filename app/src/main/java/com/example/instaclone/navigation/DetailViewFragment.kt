@@ -173,8 +173,10 @@ class DetailViewFragment : Fragment() {
             // 데이터를 저장하기 위해 transaction 사용
             firestore?.runTransaction { transaction ->
                 uid = FirebaseAuth.getInstance().currentUser?.uid // uid 값 가져옴
+
                 val contentDTO = transaction.get(tsDoc!!) // 해당 document 받아오기
                     .toObject(ContentDTO::class.java)//트랜젝션의 데이터를 ContentDTO로 캐스팅
+
                 if (contentDTO!!.favorites.containsKey(uid)) { //좋아요 버튼이 이미 클릭 되어있으면 -> favorites 값이 true이면
                     //When the button is clicked
                     contentDTO.favoriteCount = contentDTO.favoriteCount - 1
