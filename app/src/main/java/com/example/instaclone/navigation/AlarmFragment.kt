@@ -1,7 +1,6 @@
 package com.example.instaclone.navigation
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,10 +15,9 @@ import com.example.instaclone.databinding.ItemCommentBinding
 import com.example.instaclone.navigation.model.AlarmDTO
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.storage.FirebaseStorage
 
 class AlarmFragment : Fragment() {
-    lateinit var binding: FragmentAlarmBinding
+    private lateinit var binding: FragmentAlarmBinding
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -29,7 +27,6 @@ class AlarmFragment : Fragment() {
         binding = FragmentAlarmBinding.inflate(inflater, container, false)
 
         binding.alarmfragmentRecyclerview.adapter = AlarmRecyclerviewAdapter()
-        Log.d("민희", "AlarmRecyclerviewAdapter bidn")
         binding.alarmfragmentRecyclerview.layoutManager = LinearLayoutManager(activity)
         return binding.root
     }
@@ -39,9 +36,7 @@ class AlarmFragment : Fragment() {
         lateinit var binding: ItemCommentBinding
 
         init {
-            Log.d("민희", "init bidn")
             var uid = FirebaseAuth.getInstance().currentUser?.uid
-            Log.d("민희", "init bidn $uid")
 
             FirebaseFirestore.getInstance() //나에게 도착한 메세지만 필터링
                 .collection("alarms")
@@ -60,7 +55,6 @@ class AlarmFragment : Fragment() {
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
             binding = ItemCommentBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-            Log.d("민희", "onCreateViewHolder bidn")
 
             return CustomViewHolder(binding)
         }
@@ -69,7 +63,6 @@ class AlarmFragment : Fragment() {
             RecyclerView.ViewHolder(binding.root)
 
         override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-            Log.d("민희", "recyclerview bidn")
             FirebaseFirestore.getInstance().collection("profilesImages")
                 .document(alarmDTOList[position].uid!!)
                 .get().addOnCompleteListener {
@@ -102,7 +95,6 @@ class AlarmFragment : Fragment() {
         }
 
         override fun getItemCount(): Int {
-            Log.d("민희", "getItemCount bidn : ${alarmDTOList.size}")
             return alarmDTOList.size
         }
 

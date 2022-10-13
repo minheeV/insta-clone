@@ -5,30 +5,32 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
-import androidx.activity.result.ActivityResultLauncher
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.example.instaclone.databinding.ActivityMainBinding
 import com.example.instaclone.navigation.*
-import com.google.android.gms.tasks.Task
+import com.example.instaclone.navigation.model.PushDTO
+import com.example.instaclone.navigation.util.RetrofitInstance
 import com.google.android.material.navigation.NavigationBarView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.storage.FirebaseStorage
-import com.google.firebase.storage.UploadTask
+import com.google.firebase.messaging.FirebaseMessaging
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListener {
     lateinit var binding: ActivityMainBinding
-
-    lateinit var getResult: ActivityResultLauncher<Intent>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
 
         binding.bottomNavigation.setOnItemSelectedListener(this)
         //set default screen
@@ -40,6 +42,7 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
             arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),
             1
         )
+        registerPushToken()
     }
 
     /**
@@ -100,4 +103,58 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
         binding.toolbarBtnBack.visibility = View.GONE
         binding.toolbarTitleImage.visibility = View.VISIBLE
     }
+
+    private fun registerPushToken() {
+        FirebaseMessaging.getInstance().token.addOnCompleteListener {
+            val token = it.result
+            val uid = FirebaseAuth.getInstance().currentUser?.uid
+            val map = mutableMapOf<String, Any>()
+            map["pushToken"] = token!!
+            FirebaseFirestore.getInstance()
+                .collection("pushtokens")
+                .document(uid!!)
+                .set(map)
+        }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        sendMessage("btup3gzXotNJtGL49K94Edzi4iz1", "test", "check")
+
+    }
+
+    private fun sendMessage(destinationUid: String, title: String, message: String) {
+        Log.d("민희", destinationUid)
+        FirebaseFirestore.getInstance()
+            .collection("pushtokens")
+            .document(destinationUid)
+            .get()
+            .addOnCompleteListener {
+                if (it.isSuccessful) {
+                    val token = it.result.get("pushToken").toString()
+                    val pushDTO = PushDTO()
+                    pushDTO.to = token
+                    pushDTO.notification.title = title
+                    pushDTO.notification.body = message
+                    Log.d("민희", "isSuccessful addOnCompleteListener")
+                    sendNotification(pushDTO)
+                }
+            }
+    }
+
+    private fun sendNotification(pushDTO: PushDTO) =
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                Log.d("민희", "to : ${pushDTO.to}, title : ${pushDTO.notification.title}")
+
+                val response = RetrofitInstance.api.sendNotification(pushDTO)
+                if (response.isSuccessful) {
+                    Log.d("민희", " isSuccessful sendNotification()")
+                } else {
+                    Log.e("민희", "${response.errorBody()}")
+                }
+            } catch (e: Exception) {
+                println(e.stackTrace)
+            }
+        }
 }
