@@ -1,37 +1,34 @@
 package com.example.instaclone.navigation
 
 import android.Manifest
-import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.BlendModeColorFilter
-import android.graphics.PorterDuff
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.BlendModeColorFilterCompat
 import androidx.core.graphics.BlendModeCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.example.instaclone.LoginActivity
 import com.example.instaclone.MainActivity
 import com.example.instaclone.R
 import com.example.instaclone.databinding.FragmentUserBinding
+import com.example.instaclone.navigation.adapter.UserFragmentRecyclerViewAdapter
 import com.example.instaclone.navigation.model.AlarmDTO
 import com.example.instaclone.navigation.model.ContentDTO
 import com.example.instaclone.navigation.model.FollowDTO
+import com.example.instaclone.navigation.util.Constants
+import com.example.instaclone.navigation.util.Constants.Companion.firebaseAuth
+import com.example.instaclone.navigation.util.FcmPush
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
@@ -39,6 +36,8 @@ import com.google.firebase.storage.FirebaseStorage
 //내 계정, 상대방 계정
 class UserFragment : Fragment() {
     lateinit var binding: FragmentUserBinding
+    private var contentDTOs: ArrayList<ContentDTO> = arrayListOf()
+
     var fireStore: FirebaseFirestore? = null
     var uid: String? = null
     var auth: FirebaseAuth? = null
@@ -60,10 +59,6 @@ class UserFragment : Fragment() {
                 FirebaseFirestore.getInstance().collection("profileImages").document(uid).set(map)
             }
         }
-    }
-
-    companion object {
-        var PICK_PROFILE_FROM_ALBUM = 10
     }
 
     @RequiresApi(Build.VERSION_CODES.Q)
@@ -105,7 +100,18 @@ class UserFragment : Fragment() {
             }
         }
 
-        binding.accountRecyclerview.adapter = UserFragmentRecyclerViewAdapter()
+        fireStore!!.collection("images").whereEqualTo("uid", uid)
+            .addSnapshotListener { querySnapshot, firebaseFirestoreException ->
+                if (querySnapshot == null) return@addSnapshotListener
+                //Get data
+                for (snapshot in querySnapshot.documents) {
+                    contentDTOs.add(snapshot.toObject(ContentDTO::class.java)!!)
+                }
+                binding.accountTvPostCount.text = contentDTOs.size.toString()
+            }
+
+        binding.accountRecyclerview.adapter =
+            UserFragmentRecyclerViewAdapter(fireStore!!, contentDTOs, uid!!, requireActivity())
         binding.accountRecyclerview.layoutManager = GridLayoutManager(requireActivity(), 3)
 
         binding.accountIvProfile.setOnClickListener {
@@ -120,11 +126,17 @@ class UserFragment : Fragment() {
             }
 
         }
+
+        //getFollowerAndFollowing()
+        return binding.root
+    }
+
+    @RequiresApi(Build.VERSION_CODES.Q)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         getProfileImage()
         getFollowing()
         getFollower()
-        //getFollowerAndFollowing()
-        return binding.root
     }
 
     private fun requestFollow() {
@@ -223,6 +235,10 @@ class UserFragment : Fragment() {
         alarmDTO.kind = 2
         alarmDTO.timestamp = System.currentTimeMillis()
         FirebaseFirestore.getInstance().collection("alarms").document().set(alarmDTO)
+
+        val message =
+            firebaseAuth.currentUser?.email + context?.resources?.getString(R.string.alarm_follow)
+        FcmPush.instance.sendMessage(destinationUid, "InstaClone", message)
     }
 
     /**
@@ -241,45 +257,5 @@ class UserFragment : Fragment() {
                         )
                 }
             }
-    }
-
-    @SuppressLint("NotifyDataSetChanged")
-    inner class UserFragmentRecyclerViewAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
-        var contentDTOs: ArrayList<ContentDTO> = arrayListOf()
-
-        init {
-            fireStore?.collection("images")?.whereEqualTo("uid", uid)
-                ?.addSnapshotListener { querySnapshot, firebaseFirestoreException ->
-                    if (querySnapshot == null) return@addSnapshotListener
-                    //Get data
-                    for (snapshot in querySnapshot.documents) {
-                        contentDTOs.add(snapshot.toObject(ContentDTO::class.java)!!)
-                    }
-                    binding.accountTvPostCount.text = contentDTOs.size.toString()
-                    notifyDataSetChanged()
-                } // 내가 올린 이미지만 내 유아이디일때만 검색
-        }
-
-        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-            val width = resources.displayMetrics.widthPixels / 3 //폭의 3분의 1 값
-            val imageview = ImageView(parent.context)
-            imageview.layoutParams = ConstraintLayout.LayoutParams(width, width)
-            return CustomViewHolder(imageview)
-        }
-
-        inner class CustomViewHolder(var imageview: ImageView) :
-            RecyclerView.ViewHolder(imageview) {
-        }
-
-        override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-            val imageView = (holder as CustomViewHolder).imageview
-            Glide.with(holder.itemView.context).load(contentDTOs[position].imageUrl)
-                .apply(RequestOptions().centerCrop()).into(imageView)
-        }
-
-        override fun getItemCount(): Int {
-            return contentDTOs.size
-
-        }
     }
 }

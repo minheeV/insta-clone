@@ -14,6 +14,7 @@ import androidx.core.content.ContextCompat
 import com.example.instaclone.databinding.ActivityMainBinding
 import com.example.instaclone.navigation.*
 import com.example.instaclone.navigation.model.PushDTO
+import com.example.instaclone.navigation.util.FcmPush
 import com.example.instaclone.navigation.util.RetrofitInstance
 import com.google.android.material.navigation.NavigationBarView
 import com.google.firebase.auth.FirebaseAuth
@@ -31,7 +32,6 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-
         binding.bottomNavigation.setOnItemSelectedListener(this)
         //set default screen
         binding.bottomNavigation.selectedItemId = R.id.action_home
@@ -48,8 +48,6 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
     /**
      * navigationItemSelect 이벤트로 FragmentManager의 replace()함수를 통해 화면 전환을 해준다.
      */
-
-    //TODO 220920 상세페이지 2 이미지를 올리지 않은 아이디로 로그인
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         setToolbarDefault()
         when (item.itemId) {
@@ -91,7 +89,6 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
                 userFragment.arguments = bundle
                 supportFragmentManager.beginTransaction()
                     .replace(R.id.main_content, userFragment).commit()
-
                 return true
             }
         }
@@ -116,45 +113,4 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
                 .set(map)
         }
     }
-
-    override fun onStop() {
-        super.onStop()
-        sendMessage("btup3gzXotNJtGL49K94Edzi4iz1", "test", "check")
-
-    }
-
-    private fun sendMessage(destinationUid: String, title: String, message: String) {
-        Log.d("민희", destinationUid)
-        FirebaseFirestore.getInstance()
-            .collection("pushtokens")
-            .document(destinationUid)
-            .get()
-            .addOnCompleteListener {
-                if (it.isSuccessful) {
-                    val token = it.result.get("pushToken").toString()
-                    val pushDTO = PushDTO()
-                    pushDTO.to = token
-                    pushDTO.notification.title = title
-                    pushDTO.notification.body = message
-                    Log.d("민희", "isSuccessful addOnCompleteListener")
-                    sendNotification(pushDTO)
-                }
-            }
-    }
-
-    private fun sendNotification(pushDTO: PushDTO) =
-        CoroutineScope(Dispatchers.IO).launch {
-            try {
-                Log.d("민희", "to : ${pushDTO.to}, title : ${pushDTO.notification.title}")
-
-                val response = RetrofitInstance.api.sendNotification(pushDTO)
-                if (response.isSuccessful) {
-                    Log.d("민희", " isSuccessful sendNotification()")
-                } else {
-                    Log.e("민희", "${response.errorBody()}")
-                }
-            } catch (e: Exception) {
-                println(e.stackTrace)
-            }
-        }
 }
