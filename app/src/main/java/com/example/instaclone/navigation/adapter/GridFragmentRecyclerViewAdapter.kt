@@ -12,19 +12,20 @@ import com.bumptech.glide.request.RequestOptions
 import com.example.instaclone.R
 import com.example.instaclone.navigation.UserFragment
 import com.example.instaclone.navigation.model.ContentDTO
+import com.example.instaclone.navigation.util.Constants.Companion.DESTINATION_UID
+import com.example.instaclone.navigation.util.Constants.Companion.firebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestore
 
-class GridFragmentRecyclerViewAdapter(fireStore: FirebaseFirestore, contentDTOs: ArrayList<ContentDTO>, context: Context) :
+class GridFragmentRecyclerViewAdapter(contentDTOs: ArrayList<ContentDTO>, context: Context) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private var contentDTOs: ArrayList<ContentDTO>
-    private var fireStore: FirebaseFirestore
     var context: Context
 
     init {
-        this.fireStore = fireStore
         this.context = context
         this.contentDTOs = contentDTOs
-        fireStore.collection("images")
+
+        firebaseFirestore.collection("images")
             .addSnapshotListener { querySnapshot, firebaseFirestoreException ->
                 if (querySnapshot == null) return@addSnapshotListener
                 contentDTOs.clear()
@@ -56,7 +57,7 @@ class GridFragmentRecyclerViewAdapter(fireStore: FirebaseFirestore, contentDTOs:
             val fragment = UserFragment()
             val bundle = Bundle()
 
-            bundle.putString("destinationUid", contentDTOs[position].uid)
+            bundle.putString(DESTINATION_UID, contentDTOs[position].uid)
             bundle.putString("userId", contentDTOs[position].userId)
 
             fragment.arguments = bundle

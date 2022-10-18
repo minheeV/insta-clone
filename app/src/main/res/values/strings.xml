@@ -50,6 +50,7 @@
     <!-- Toolbar -->
     <string name="back">Back</string>
     <string name="title_text">CloneSta</string>
+    <string name="text_storage">스토리지 읽기 권한이 없습니다.</string>
 
     <!-- etc -->
     <item name="visible" type="id" />

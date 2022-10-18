@@ -13,9 +13,9 @@ import androidx.activity.result.contract.ActivityResultContracts
 import com.example.instaclone.R
 import com.example.instaclone.databinding.ActivityAddPhotoBinding
 import com.example.instaclone.navigation.model.ContentDTO
+import com.example.instaclone.navigation.util.Constants.Companion.firebaseAuth
+import com.example.instaclone.navigation.util.Constants.Companion.firebaseFirestore
 import com.google.android.gms.tasks.Task
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.UploadTask
 import java.text.SimpleDateFormat
@@ -24,12 +24,9 @@ import java.util.*
 class AddPhotoActivity : AppCompatActivity() {
     private lateinit var binding: ActivityAddPhotoBinding
 
-    val PICK_IMAGE_FROM_ALBUM = 0
 
     var storage: FirebaseStorage? = null
     var photoUri: Uri? = null
-    var auth: FirebaseAuth? = null // 유저 정보 가져오기
-    var firebaseStore: FirebaseFirestore? = null // firebase 데이터베이스 사용
     private lateinit var getResult: ActivityResultLauncher<Intent>
 
 
@@ -52,10 +49,7 @@ class AddPhotoActivity : AppCompatActivity() {
                 }
             }
 
-
         storage = FirebaseStorage.getInstance()
-        auth = FirebaseAuth.getInstance()
-        firebaseStore = FirebaseFirestore.getInstance()
 
         val photoPickIntent = Intent(Intent.ACTION_PICK) // 선택한 이미지를 가져올 수 있도록 생성
         photoPickIntent.type = "image/*"
@@ -116,12 +110,12 @@ class AddPhotoActivity : AppCompatActivity() {
             var contentDTO = ContentDTO()
             contentDTO.imageUrl = uri.toString()
 
-            contentDTO.uid = auth?.currentUser?.uid
-            contentDTO.userId = auth?.currentUser?.email
+            contentDTO.uid = firebaseAuth.currentUser!!.uid
+            contentDTO.userId = firebaseAuth.currentUser!!.email!!
             contentDTO.explain = binding.addphotoEditExplain.text.toString()
             contentDTO.timestamp = System.currentTimeMillis()
 
-            firebaseStore?.collection("images")?.document()?.set(contentDTO) // 데이터베이스에 입력
+            firebaseFirestore.collection("images").document().set(contentDTO) // 데이터베이스에 입력
             setResult(Activity.RESULT_OK)
             finish()
             //파일 업로드가 성공한 걸 알 수 있도록 토스트 팝업

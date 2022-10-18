@@ -1,6 +1,7 @@
 package com.example.instaclone.navigation
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
@@ -26,10 +27,10 @@ import com.example.instaclone.navigation.adapter.UserFragmentRecyclerViewAdapter
 import com.example.instaclone.navigation.model.AlarmDTO
 import com.example.instaclone.navigation.model.ContentDTO
 import com.example.instaclone.navigation.model.FollowDTO
-import com.example.instaclone.navigation.util.Constants
+import com.example.instaclone.navigation.util.Constants.Companion.DESTINATION_UID
 import com.example.instaclone.navigation.util.Constants.Companion.firebaseAuth
+import com.example.instaclone.navigation.util.Constants.Companion.firebaseFirestore
 import com.example.instaclone.navigation.util.FcmPush
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 
@@ -40,7 +41,6 @@ class UserFragment : Fragment() {
 
     var fireStore: FirebaseFirestore? = null
     var uid: String? = null
-    var auth: FirebaseAuth? = null
     var currentUserUid: String? = null // 내 계정인지 상대방 계정인지 판단
 
     private val startForResult = registerForActivityResult(
@@ -48,19 +48,20 @@ class UserFragment : Fragment() {
     ) {
         if (it.resultCode == AppCompatActivity.RESULT_OK) {
             val imageUrl = it.data?.data
-            val uid = FirebaseAuth.getInstance().currentUser?.uid
+            val uid = firebaseAuth.currentUser!!.uid
             val storageRef = FirebaseStorage.getInstance().reference.child("userProfileImages")
-                .child(uid!!) // userProfileImages 이미지 저장할 폴더명
+                .child(uid) // userProfileImages 이미지 저장할 폴더명
             storageRef.putFile(imageUrl!!).continueWithTask {
                 return@continueWithTask storageRef.downloadUrl
             }.addOnSuccessListener { uri ->
                 val map = HashMap<String, Any>()
                 map["image"] = uri.toString()
-                FirebaseFirestore.getInstance().collection("profileImages").document(uid).set(map)
+                firebaseFirestore.collection("profileImages").document(uid).set(map)
             }
         }
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     @RequiresApi(Build.VERSION_CODES.Q)
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -69,10 +70,9 @@ class UserFragment : Fragment() {
     ): View {
         binding = FragmentUserBinding.inflate(inflater, container, false)
         fireStore = FirebaseFirestore.getInstance()
-        auth = FirebaseAuth.getInstance()
-        currentUserUid = auth?.currentUser?.uid
+        currentUserUid = firebaseAuth.currentUser!!.uid
         if (arguments != null) {
-            uid = arguments?.getString("destinationUid")
+            uid = arguments?.getString(DESTINATION_UID)
             if (uid != null && uid == currentUserUid) {
                 //MyPage
                 binding.accountBtnFollowSignout.text =
@@ -80,7 +80,7 @@ class UserFragment : Fragment() {
                 binding.accountBtnFollowSignout.setOnClickListener { // 액티비티 종료 및 login 액티비티 이동, firebase auth 값에 signOut
                     activity?.finish()
                     startActivity(Intent(activity, LoginActivity::class.java))
-                    auth?.signOut()
+                    firebaseAuth.signOut()
                 }
             } else {
                 //OtherUserPage
@@ -103,11 +103,13 @@ class UserFragment : Fragment() {
         fireStore!!.collection("images").whereEqualTo("uid", uid)
             .addSnapshotListener { querySnapshot, firebaseFirestoreException ->
                 if (querySnapshot == null) return@addSnapshotListener
+                contentDTOs.clear()
                 //Get data
                 for (snapshot in querySnapshot.documents) {
                     contentDTOs.add(snapshot.toObject(ContentDTO::class.java)!!)
                 }
                 binding.accountTvPostCount.text = contentDTOs.size.toString()
+                binding.accountRecyclerview.adapter?.notifyDataSetChanged()
             }
 
         binding.accountRecyclerview.adapter =
@@ -230,14 +232,14 @@ class UserFragment : Fragment() {
     private fun followAlarm(destinationUid: String) {
         var alarmDTO = AlarmDTO()
         alarmDTO.destinationUid = destinationUid
-        alarmDTO.userId = auth?.currentUser?.email
-        alarmDTO.uid = auth?.currentUser?.uid
+        alarmDTO.userId = firebaseAuth.currentUser!!.email!!
+        alarmDTO.uid = firebaseAuth.currentUser!!.uid
         alarmDTO.kind = 2
         alarmDTO.timestamp = System.currentTimeMillis()
         FirebaseFirestore.getInstance().collection("alarms").document().set(alarmDTO)
 
         val message =
-            firebaseAuth.currentUser?.email + context?.resources?.getString(R.string.alarm_follow)
+            firebaseAuth.currentUser!!.email + context?.resources?.getString(R.string.alarm_follow)
         FcmPush.instance.sendMessage(destinationUid, "InstaClone", message)
     }
 

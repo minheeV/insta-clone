@@ -10,6 +10,9 @@ import com.bumptech.glide.request.RequestOptions
 import com.example.instaclone.R
 import com.example.instaclone.databinding.ItemCommentBinding
 import com.example.instaclone.navigation.model.AlarmDTO
+import com.example.instaclone.navigation.util.Constants
+import com.example.instaclone.navigation.util.Constants.Companion.DESTINATION_UID
+import com.example.instaclone.navigation.util.Constants.Companion.firebaseAuth
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
@@ -20,11 +23,11 @@ class AlarmRecyclerviewAdapter(context: Context) : RecyclerView.Adapter<Recycler
 
     init {
         this.context = context
-        val uid = FirebaseAuth.getInstance().currentUser?.uid
+        val uid = firebaseAuth.currentUser!!.uid
 
         FirebaseFirestore.getInstance() //나에게 도착한 메세지만 필터링
             .collection("alarms")
-            .whereEqualTo("destinationUid", uid)
+            .whereEqualTo(DESTINATION_UID, uid)
             .addSnapshotListener { querySnapshot, firebaseFirestoreException ->
                 alarmDTOList.clear()
                 if (querySnapshot == null) return@addSnapshotListener

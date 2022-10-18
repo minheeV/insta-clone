@@ -2,6 +2,7 @@ package com.example.instaclone.navigation.util
 
 import android.util.Log
 import com.example.instaclone.navigation.model.PushDTO
+import com.example.instaclone.navigation.util.Constants.Companion.firebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -13,7 +14,7 @@ class FcmPush {
     }
 
     fun sendMessage(destinationUid: String, title: String, message: String) {
-        FirebaseFirestore.getInstance()
+        firebaseFirestore
             .collection("pushtokens")
             .document(destinationUid)
             .get()

@@ -13,7 +13,9 @@ class Constants {
     companion object{
         // FCM URL
         const val FCM_URL = "https://fcm.googleapis.com"
-        val firebaseAuth = FirebaseAuth.getInstance()
+        const val DESTINATION_UID = "destinationUid"
+
+        val firebaseAuth = FirebaseAuth.getInstance() //Firebase 로그인 통합 관리하는 Object
         @SuppressLint("StaticFieldLeak")
         val firebaseFirestore = FirebaseFirestore.getInstance()
     }

@@ -17,10 +17,10 @@ import com.example.instaclone.navigation.UserFragment
 import com.example.instaclone.navigation.model.AlarmDTO
 import com.example.instaclone.navigation.model.ContentDTO
 import com.example.instaclone.navigation.model.FollowDTO
+import com.example.instaclone.navigation.util.Constants.Companion.DESTINATION_UID
 import com.example.instaclone.navigation.util.Constants.Companion.firebaseAuth
 import com.example.instaclone.navigation.util.Constants.Companion.firebaseFirestore
 import com.example.instaclone.navigation.util.FcmPush
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 
@@ -29,7 +29,7 @@ import com.google.firebase.firestore.Query
  * 사용자의 ID, Profile 이미지, 업로드 한 이미지, 좋아요 버튼, 댓글 버튼, 좋아요 갯수, 글 내용에 대한 정보를 담는 recyclerview
  */
 
-class DetailViewRecyclerViewAdapter(uid: String, context: Context) :
+class DetailViewRecyclerViewAdapter(context: Context) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private var contentDTOs: ArrayList<ContentDTO> = arrayListOf() // 업로드 내용
     private var contentUIDList: ArrayList<String> = arrayListOf() // 사용자 정보 List
@@ -39,7 +39,7 @@ class DetailViewRecyclerViewAdapter(uid: String, context: Context) :
 
     // 초기에 fireStore 에 업로드 된 정보들을 얻어서 list 에 add 해준다.
     init {
-        this.uid = uid
+        uid = firebaseAuth.currentUser!!.uid
         this.context = context
         firebaseFirestore.collection("users")
             .document(uid)
@@ -97,7 +97,7 @@ class DetailViewRecyclerViewAdapter(uid: String, context: Context) :
         binding.detailviewitemProfileImage.setOnClickListener {
             val fragment = UserFragment()
             val bundle = Bundle()
-            bundle.putString("destinationUid", contentDTOs[position].uid)
+            bundle.putString(DESTINATION_UID, contentDTOs[position].uid)
             bundle.putString("userId", contentDTOs[position].userId)
             fragment.arguments = bundle
             (context as FragmentActivity).supportFragmentManager.beginTransaction()
@@ -137,7 +137,7 @@ class DetailViewRecyclerViewAdapter(uid: String, context: Context) :
                 "contentUid",
                 contentUIDList[position]
             ) // 인텐트 안에 컨텐트 내가 선택한 이미지의 uid넘겨줌
-            intent.putExtra("destinationUid", contentDTOs[position].uid)
+            intent.putExtra(DESTINATION_UID, contentDTOs[position].uid)
             context.startActivity(intent)
         }
 
@@ -156,7 +156,7 @@ class DetailViewRecyclerViewAdapter(uid: String, context: Context) :
             .document(contentUIDList[position]) // images collection에서 원하는 uid의 document에 대한 정보
         // 데이터를 저장하기 위해 transaction 사용
         firebaseFirestore.runTransaction { transaction ->
-            uid = FirebaseAuth.getInstance().currentUser?.uid!! // uid 값 가져옴
+            uid = firebaseAuth.currentUser!!.uid // uid 값 가져옴
 
             val contentDTO = transaction.get(tsDoc!!) // 해당 document 받아오기
                 .toObject(ContentDTO::class.java)//트랜젝션의 데이터를 ContentDTO로 캐스팅
@@ -178,14 +178,14 @@ class DetailViewRecyclerViewAdapter(uid: String, context: Context) :
     private fun favoriteAlarm(destinationUid: String) {
         val alarmDTO = AlarmDTO()
         alarmDTO.destinationUid = destinationUid
-        alarmDTO.userId = firebaseAuth.currentUser?.email
-        alarmDTO.uid = firebaseAuth.currentUser?.uid
+        alarmDTO.userId = firebaseAuth.currentUser!!.email!!
+        alarmDTO.uid = firebaseAuth.currentUser!!.uid
         alarmDTO.kind = 0
         alarmDTO.timestamp = System.currentTimeMillis()
         FirebaseFirestore.getInstance().collection("alarms").document().set(alarmDTO)
 
         val message =
-            firebaseAuth.currentUser?.email + context.resources.getString(R.string.alarm_favorite)
+            firebaseAuth.currentUser!!.email + context.resources.getString(R.string.alarm_favorite)
         FcmPush.instance.sendMessage(destinationUid, "InstaClone", message)
     }
 }

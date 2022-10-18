@@ -3,26 +3,23 @@ package com.example.instaclone
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.MenuItem
 import android.view.View
+import android.view.WindowInsets
+import android.view.WindowManager
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.example.instaclone.databinding.ActivityMainBinding
 import com.example.instaclone.navigation.*
-import com.example.instaclone.navigation.model.PushDTO
-import com.example.instaclone.navigation.util.FcmPush
-import com.example.instaclone.navigation.util.RetrofitInstance
+import com.example.instaclone.navigation.util.Constants.Companion.DESTINATION_UID
+import com.example.instaclone.navigation.util.Constants.Companion.firebaseAuth
+import com.example.instaclone.navigation.util.Constants.Companion.firebaseFirestore
 import com.google.android.material.navigation.NavigationBarView
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.messaging.FirebaseMessaging
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListener {
     lateinit var binding: ActivityMainBinding
@@ -31,6 +28,17 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        // 상태바 없애기
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            val insetsController = window.insetsController
+            insetsController?.hide(WindowInsets.Type.statusBars())
+        } else {
+            window.setFlags(
+                WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN
+            )
+        }
 
         binding.bottomNavigation.setOnItemSelectedListener(this)
         //set default screen
@@ -71,7 +79,7 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
                 ) {
                     startActivity(Intent(this, AddPhotoActivity::class.java))
                 } else {
-                    Toast.makeText(this, "스토리지 읽기 권한이 없습니다.", Toast.LENGTH_LONG).show()
+                    Toast.makeText(this, getString(R.string.text_storage), Toast.LENGTH_LONG).show()
                 }
                 return true
             }
@@ -84,8 +92,8 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
             R.id.action_account -> {
                 val userFragment = UserFragment()
                 var bundle = Bundle()
-                var uid = FirebaseAuth.getInstance().currentUser?.uid
-                bundle.putString("destinationUid", uid)
+                var uid = firebaseAuth.currentUser!!.uid
+                bundle.putString(DESTINATION_UID, uid)
                 userFragment.arguments = bundle
                 supportFragmentManager.beginTransaction()
                     .replace(R.id.main_content, userFragment).commit()
@@ -101,13 +109,16 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
         binding.toolbarTitleImage.visibility = View.VISIBLE
     }
 
+    /**
+     * Push 이벤트 시 등록된 token에만 알림가도록 해주는 메서드
+     */
     private fun registerPushToken() {
         FirebaseMessaging.getInstance().token.addOnCompleteListener {
             val token = it.result
-            val uid = FirebaseAuth.getInstance().currentUser?.uid
+            val uid = firebaseAuth.currentUser!!.uid
             val map = mutableMapOf<String, Any>()
             map["pushToken"] = token!!
-            FirebaseFirestore.getInstance()
+            firebaseFirestore
                 .collection("pushtokens")
                 .document(uid!!)
                 .set(map)

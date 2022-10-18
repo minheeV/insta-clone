@@ -9,29 +9,25 @@ import androidx.activity.result.ActivityResult
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import com.example.instaclone.databinding.ActivityLoginBinding
+import com.example.instaclone.navigation.util.Constants.Companion.firebaseAuth
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
 
 class LoginActivity : AppCompatActivity() {
     lateinit var binding: ActivityLoginBinding
 
-    var auth: FirebaseAuth? = null // firebase 인증 라이브러리
-    var googleSignInClient: GoogleSignInClient? = null // google 계정 로그인
+    private var googleSignInClient: GoogleSignInClient? = null // google 계정 로그인
 
-    lateinit var getResult: ActivityResultLauncher<Intent>
+    private lateinit var getResult: ActivityResultLauncher<Intent>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        // Firebase 로그인 통합 관리하는 Object 만들기
-        auth = FirebaseAuth.getInstance()
 
         // 사용자 ID 및 기본 프로필 정보 요청하도록 구글 로그인 구성
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -69,7 +65,7 @@ class LoginActivity : AppCompatActivity() {
     //자동 로그인 기능
     override fun onStart() {
         super.onStart()
-        moveMainPage(auth?.currentUser)
+        moveMainPage(firebaseAuth.currentUser)
     }
 
     /**
@@ -85,10 +81,10 @@ class LoginActivity : AppCompatActivity() {
      * 있었던 이메일이라면 signInwithEmailAndPassword를 통해 로그인 하게 된다.
      */
     private fun signInAndSignUp() {
-        auth?.createUserWithEmailAndPassword(
+        firebaseAuth.createUserWithEmailAndPassword(
             binding.emailEdittext.text.toString().trim(),
             binding.passwordEdittext.text.toString()
-        )?.addOnCompleteListener { task ->
+        ).addOnCompleteListener { task ->
             when {
                 task.isSuccessful -> { // id 생성 성공
                     Toast.makeText(this, "회원가입 성공", Toast.LENGTH_LONG).show()
@@ -111,10 +107,10 @@ class LoginActivity : AppCompatActivity() {
      * 기존에 있었던 이메일이므로 로그인하게 된다.
      */
     private fun signInEmail() {
-        auth?.signInWithEmailAndPassword(
+        firebaseAuth.signInWithEmailAndPassword(
             binding.emailEdittext.text.toString().trim(),
             binding.passwordEdittext.text.toString()
-        )?.addOnCompleteListener { task ->
+        ).addOnCompleteListener { task ->
             if (task.isSuccessful) { //로그인 성공
                 Toast.makeText(this, "로그인 성공", Toast.LENGTH_LONG).show()
                 moveMainPage(task.result?.user)
@@ -131,8 +127,8 @@ class LoginActivity : AppCompatActivity() {
      */
     private fun firebaseAuthWithGoogle(account: String?) {
         val credential = GoogleAuthProvider.getCredential(account, null)
-        auth?.signInWithCredential(credential)
-            ?.addOnCompleteListener { task ->
+        firebaseAuth.signInWithCredential(credential)
+            .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     //아이디 패스워드 맞았을 때
                     moveMainPage(task.result?.user)
