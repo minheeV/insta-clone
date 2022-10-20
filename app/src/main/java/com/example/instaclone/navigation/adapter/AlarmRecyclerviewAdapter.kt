@@ -65,7 +65,7 @@ class AlarmRecyclerviewAdapter(context: Context) : RecyclerView.Adapter<AlarmRec
                     .document(alarmDTOList[position].uid)
                     .get().addOnCompleteListener {
                         if (it.isSuccessful) {
-                            val url = it.result!!["image"]
+                            val url = it.result["image"]
                             Glide.with(binding.root.context)
                                 .load(url)
                                 .diskCacheStrategy(DiskCacheStrategy.NONE)

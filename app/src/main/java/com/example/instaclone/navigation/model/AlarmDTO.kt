@@ -8,6 +8,6 @@ data class AlarmDTO(
     //1 : comment alarm
     //2 : follow alarm
     var kind: Int = 0, // 어떤 타입의 메세지 종류
-    var message: String = "", // comment
+    var message: String? = null, // comment
     var timestamp: Long = 0
 )
