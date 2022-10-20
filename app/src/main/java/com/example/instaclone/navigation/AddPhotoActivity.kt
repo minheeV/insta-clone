@@ -24,7 +24,6 @@ import java.util.*
 class AddPhotoActivity : AppCompatActivity() {
     private lateinit var binding: ActivityAddPhotoBinding
 
-
     var storage: FirebaseStorage? = null
     var photoUri: Uri? = null
     private lateinit var getResult: ActivityResultLauncher<Intent>
@@ -38,7 +37,6 @@ class AddPhotoActivity : AppCompatActivity() {
         // 성공했을 때 ( = 사진을 선택했을 때) 선택한 이미지 경로가 전달된다.
         getResult =
             registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
-
                 if (result.resultCode == RESULT_OK) {
                     //이미지 경로 넘어옴
                     photoUri = result.data?.data

@@ -18,6 +18,7 @@ import androidx.core.graphics.BlendModeCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
 import com.example.instaclone.LoginActivity
 import com.example.instaclone.MainActivity
@@ -253,7 +254,10 @@ class UserFragment : Fragment() {
                 if (documentSnapshot == null) return@addSnapshotListener
                 if (documentSnapshot.data != null) {
                     val url = documentSnapshot.data!!["image"] // image 키값
-                    Glide.with(requireActivity()).load(url).apply(RequestOptions().circleCrop())
+                    Glide.with(requireActivity())
+                        .load(url).apply(RequestOptions().circleCrop())
+                        .diskCacheStrategy(DiskCacheStrategy.NONE)
+                        .skipMemoryCache(true)
                         .into(
                             binding.accountIvProfile
                         )
