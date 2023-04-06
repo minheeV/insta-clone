@@ -1,6 +1,7 @@
 package com.example.instaclone
 
 import android.content.Intent
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -8,6 +9,7 @@ import android.widget.Toast
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import com.example.instaclone.databinding.ActivityLoginBinding
 import com.example.instaclone.navigation.util.Constants.Companion.firebaseAuth
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -24,6 +26,7 @@ class LoginActivity : AppCompatActivity() {
 
     private lateinit var getResult: ActivityResultLauncher<Intent>
 
+    @RequiresApi(Build.VERSION_CODES.M)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityLoginBinding.inflate(layoutInflater)
@@ -81,6 +84,9 @@ class LoginActivity : AppCompatActivity() {
      * 있었던 이메일이라면 signInwithEmailAndPassword를 통해 로그인 하게 된다.
      */
     private fun signInAndSignUp() {
+        //val email = binding.emailEdittext.text.toString() == null ? ""
+        //val password = binding.passwordEdittext.text.toString()
+
         firebaseAuth.createUserWithEmailAndPassword(
             binding.emailEdittext.text.toString().trim(),
             binding.passwordEdittext.text.toString()
