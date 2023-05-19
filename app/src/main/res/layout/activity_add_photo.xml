@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/login_background"
     tools:context=".navigation.AddPhotoActivity">
 
     <androidx.appcompat.widget.Toolbar
@@ -12,19 +13,11 @@
         android:layout_height="35dp"
         app:layout_constraintTop_toTopOf="parent">
 
-        <!--<TextView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:fontFamily="@font/bmyeonsung"
-            android:gravity="center"
-            android:text="@string/title_text"
-            android:textColor="@color/black"
-            android:textSize="20sp" />-->
-
         <ImageView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center"
+            android:layout_marginTop="8dp"
             android:src="@drawable/logo_title" />
     </androidx.appcompat.widget.Toolbar>
 

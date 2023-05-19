@@ -84,8 +84,15 @@ class LoginActivity : AppCompatActivity() {
      * 있었던 이메일이라면 signInwithEmailAndPassword를 통해 로그인 하게 된다.
      */
     private fun signInAndSignUp() {
-        //val email = binding.emailEdittext.text.toString() == null ? ""
-        //val password = binding.passwordEdittext.text.toString()
+        val email = binding.emailEdittext.text.toString()
+        val password = binding.passwordEdittext.text.toString()
+
+        if(email.isEmpty() || password.isEmpty()){
+            Toast.makeText(
+                this, "이메일 또는 비밀번호가 입력되지 않았습니다.", Toast.LENGTH_SHORT
+            ).show()
+            return
+        }
 
         firebaseAuth.createUserWithEmailAndPassword(
             binding.emailEdittext.text.toString().trim(),

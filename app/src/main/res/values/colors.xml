@@ -6,6 +6,7 @@
     <color name="teal_200">#FF03DAC5</color>
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
+    <color name="gray">#CC474242</color>
     <color name="white">#FFFFFFFF</color>
 
     <color name="colorPrimary">#ededed</color>
@@ -20,4 +21,6 @@
     <color name="colorGoogleSignInPressed">#b02513</color>
     <color name="colorEmailSignIn">#009688</color>
     <color name="colorEmailSignInPressed">#004D40</color>
+
+    <color name="login_background">#F5BCFF</color>
 </resources>
