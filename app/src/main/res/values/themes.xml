@@ -16,6 +16,11 @@
         <!-- Customize your theme here. -->
     </style>
 
+    <style name="Theme.project.SplashScreen" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/login_background</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/logo_title</item>
+        <item name="postSplashScreenTheme">@style/Theme.InstaCloneTheme</item>
+    </style>
 
     <style name="ButtonStyle" parent="Widget.AppCompat.Button.Colored">
         <item name="colorButtonNormal">@color/colorWhite</item>

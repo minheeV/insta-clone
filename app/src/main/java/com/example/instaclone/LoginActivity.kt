@@ -10,6 +10,8 @@ import androidx.activity.result.ActivityResult
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
+import androidx.core.splashscreen.SplashScreen
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.example.instaclone.databinding.ActivityLoginBinding
 import com.example.instaclone.navigation.util.Constants.Companion.firebaseAuth
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -23,12 +25,13 @@ class LoginActivity : AppCompatActivity() {
     lateinit var binding: ActivityLoginBinding
 
     private var googleSignInClient: GoogleSignInClient? = null // google 계정 로그인
-
     private lateinit var getResult: ActivityResultLauncher<Intent>
+
 
     @RequiresApi(Build.VERSION_CODES.M)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        installSplashScreen() // setContentView하기 전에 installSplashScreen
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
