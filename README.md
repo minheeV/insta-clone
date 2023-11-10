@@ -20,15 +20,17 @@ https://velog.io/@luna7182/%EB%B0%B1%EC%97%94%EB%93%9C-%ED%94%84%EB%A1%9C%EC%A0%
 
 <div align="start">
 	<img src="https://img.shields.io/badge/GitHub-181717?style=flat&logo=GitHub&logoColor=white" />
-    <img src="https://img.shields.io/badge/Android Studio-3DDC84?style=flat&logo=Android Studio&logoColor=white" />
+    	<img src="https://img.shields.io/badge/Android Studio-3DDC84?style=flat&logo=Android Studio&logoColor=white" />
 	<img src="https://img.shields.io/badge/Kotlin-7F52FF?style=flat&logo=Kotlin&logoColor=white" />
-  <img src="https://img.shields.io/badge/Jetpack Compose-4285F4?style=flat&logo=Jetpack Compose&logoColor=white" />
 </div>
 
 
 
 
 <!-- 
+
+<img src="https://img.shields.io/badge/Jetpack Compose-4285F4?style=flat&logo=Jetpack Compose&logoColor=white" />
+
 <1~2강 정리 내용 : https://velog.io/@minnie_dev/Clone-%EC%9D%B8%EC%8A%A4%ED%83%80%EA%B7%B8%EB%9E%A8-%ED%81%B4%EB%A1%A0-%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B81>
 1강 : 로그인 화면 구성 
 2강 : Firebase 연결
