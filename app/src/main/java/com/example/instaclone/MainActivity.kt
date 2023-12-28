@@ -13,11 +13,16 @@ import android.view.WindowManager
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.example.instaclone.databinding.ActivityMainBinding
-import com.example.instaclone.navigation.*
 import com.example.instaclone.navigation.util.Constants.Companion.DESTINATION_UID
 import com.example.instaclone.navigation.util.Constants.Companion.firebaseAuth
 import com.example.instaclone.navigation.util.Constants.Companion.firebaseFirestore
+import com.example.instaclone.navigation.view.AddPhotoActivity
+import com.example.instaclone.navigation.view.AlarmFragment
+import com.example.instaclone.navigation.view.DetailViewFragment
+import com.example.instaclone.navigation.view.GridFragment
+import com.example.instaclone.navigation.view.UserFragment
 import com.google.android.material.navigation.NavigationBarView
 import com.google.firebase.messaging.FirebaseMessaging
 
@@ -26,20 +31,10 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        installSplashScreen()
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        // 상태바 없애기
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            val insetsController = window.insetsController
-            insetsController?.hide(WindowInsets.Type.statusBars())
-        } else {
-            window.setFlags(
-                WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                WindowManager.LayoutParams.FLAG_FULLSCREEN
-            )
-        }
 
         binding.bottomNavigation.setOnItemSelectedListener(this)
         //set default screen

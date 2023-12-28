@@ -11,7 +11,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
 import com.example.instaclone.R
-import com.example.instaclone.navigation.UserFragment
+import com.example.instaclone.navigation.view.UserFragment
 import com.example.instaclone.navigation.model.ContentDTO
 import com.example.instaclone.navigation.util.Constants.Companion.DESTINATION_UID
 import com.example.instaclone.navigation.util.Constants.Companion.firebaseFirestore

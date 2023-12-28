@@ -1,4 +1,4 @@
-package com.example.instaclone.navigation
+package com.example.instaclone.navigation.view
 
 import android.annotation.SuppressLint
 import android.app.Activity

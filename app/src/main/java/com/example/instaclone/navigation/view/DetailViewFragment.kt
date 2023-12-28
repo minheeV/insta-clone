@@ -1,4 +1,4 @@
-package com.example.instaclone.navigation
+package com.example.instaclone.navigation.view
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -22,9 +22,10 @@ class DetailViewFragment : Fragment() {
         binding = FragmentDetailBinding.inflate(inflater, container, false)
 
         uid = firebaseAuth.currentUser!!.uid
-        binding.detailviewfragmentRecyclerview.adapter =
-            DetailViewRecyclerViewAdapter(requireActivity())
-        binding.detailviewfragmentRecyclerview.layoutManager = LinearLayoutManager(activity)
+        binding.detailviewfragmentRecyclerview.apply {
+            adapter = DetailViewRecyclerViewAdapter(requireActivity())
+            layoutManager = LinearLayoutManager(requireActivity())
+        }
         return binding.root
     }
 

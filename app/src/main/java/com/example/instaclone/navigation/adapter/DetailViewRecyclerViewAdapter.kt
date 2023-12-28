@@ -7,7 +7,6 @@ import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -15,8 +14,8 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
 import com.example.instaclone.R
 import com.example.instaclone.databinding.ItemDetailBinding
-import com.example.instaclone.navigation.CommentActivity
-import com.example.instaclone.navigation.UserFragment
+import com.example.instaclone.navigation.view.CommentActivity
+import com.example.instaclone.navigation.view.UserFragment
 import com.example.instaclone.navigation.model.AlarmDTO
 import com.example.instaclone.navigation.model.ContentDTO
 import com.example.instaclone.navigation.model.FollowDTO

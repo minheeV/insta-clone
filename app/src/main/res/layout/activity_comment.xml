@@ -4,8 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/login_background"
-    tools:context=".navigation.CommentActivity">
+    android:background="@color/white"
+    tools:context=".navigation.view.CommentActivity">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/my_toolbar"
@@ -38,22 +38,22 @@
 
     <!--전송할 메세지 입력-->
     <EditText
+        android:id="@+id/comment_edit_message"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/comment_recyclerview"
         app:layout_constraintEnd_toStartOf="@id/comment_btn_send"
-        android:id="@+id/comment_edit_message"/>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/comment_recyclerview" />
 
     <Button
+        android:id="@+id/comment_btn_send"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
         android:text="@string/send"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/comment_recyclerview"
-        android:id="@+id/comment_btn_send"/>
+        app:layout_constraintTop_toBottomOf="@id/comment_recyclerview" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

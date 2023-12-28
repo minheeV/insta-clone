@@ -1,4 +1,4 @@
-package com.example.instaclone.navigation
+package com.example.instaclone.navigation.view
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
