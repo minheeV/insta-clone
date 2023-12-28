@@ -20,6 +20,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
         android:text="@string/post"
+        android:textColor="@color/black"
         app:layout_constraintStart_toEndOf="@id/account_iv_profile"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -28,6 +29,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/count_0"
+        android:textColor="@color/black"
         app:layout_constraintEnd_toEndOf="@id/account_tv_post"
         app:layout_constraintStart_toStartOf="@id/account_tv_post"
         app:layout_constraintTop_toBottomOf="@id/account_tv_post" />
@@ -37,6 +39,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/follower"
+        android:textColor="@color/black"
         app:layout_constraintEnd_toStartOf="@id/account_tv_following"
         app:layout_constraintStart_toEndOf="@id/account_tv_post"
         app:layout_constraintTop_toTopOf="parent" />
@@ -46,6 +49,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/count_0"
+        android:textColor="@color/black"
         app:layout_constraintEnd_toEndOf="@id/account_tv_follower"
         app:layout_constraintStart_toStartOf="@id/account_tv_follower"
         app:layout_constraintTop_toBottomOf="@id/account_tv_follower" />
@@ -56,6 +60,7 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="20dp"
         android:text="@string/following"
+        android:textColor="@color/black"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/account_tv_follower"
         app:layout_constraintTop_toTopOf="parent" />
@@ -65,6 +70,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/count_0"
+        android:textColor="@color/black"
         app:layout_constraintEnd_toEndOf="@id/account_tv_following"
         app:layout_constraintStart_toStartOf="@id/account_tv_following"
         app:layout_constraintTop_toBottomOf="@id/account_tv_following" />

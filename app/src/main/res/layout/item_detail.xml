@@ -16,12 +16,13 @@
             android:layout_width="35dp"
             android:layout_height="35dp"
             android:layout_margin="7.5dp"
-            android:src="@mipmap/ic_launcher" />
+            android:background="@mipmap/ic_launcher" />
 
         <TextView
             android:id="@+id/detailviewitem_profile_textview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textColor="@color/black"
             android:text="User name" />
     </LinearLayout>
 

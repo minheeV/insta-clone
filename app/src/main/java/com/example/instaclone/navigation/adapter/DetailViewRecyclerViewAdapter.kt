@@ -49,7 +49,7 @@ class DetailViewRecyclerViewAdapter(context: Context) :
             .addOnCompleteListener {
                 if (it.isSuccessful) {
                     val userDTO = it.result.toObject(FollowDTO::class.java)
-                    if (userDTO?.followings != null) {
+                    //if (userDTO?.followings != null) {
                         firebaseFirestore
                             .collection("images")
                             .orderBy("timestamp", Query.Direction.DESCENDING)
@@ -64,13 +64,14 @@ class DetailViewRecyclerViewAdapter(context: Context) :
                                 }
                                 notifyDataSetChanged()
                             }
-                    }
+                    //}
                 }
             }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CustomViewHolder {
         val binding = ItemDetailBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        Log.d("DetailViewRecycler", "onCreateViewHolder")
         return CustomViewHolder(binding)
     }
 
