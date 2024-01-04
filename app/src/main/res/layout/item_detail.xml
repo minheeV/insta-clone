@@ -16,14 +16,14 @@
             android:layout_width="35dp"
             android:layout_height="35dp"
             android:layout_margin="7.5dp"
-            android:background="@mipmap/ic_launcher" />
+            android:src="@drawable/ic_account" />
 
         <TextView
             android:id="@+id/detailviewitem_profile_textview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/black"
-            android:text="User name" />
+            android:text="User name"
+            android:textColor="@color/black" />
     </LinearLayout>
 
     <ImageView
@@ -55,13 +55,16 @@
         android:id="@+id/detailviewitem_favoritecounter_textview"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="like 0" />
+        android:layout_marginHorizontal="8dp"
+        android:text="like 0"
+        android:textColor="@color/black" />
 
     <TextView
         android:id="@+id/detailviewitem_explain_textview"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="8dp"
-        android:text="Explain content" />
+        android:text="Explain content"
+        android:textColor="@color/black" />
 
 </LinearLayout>

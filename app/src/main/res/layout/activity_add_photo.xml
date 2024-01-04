@@ -46,7 +46,8 @@
             android:layout_width="match_parent"
             android:layout_height="100dp"
             android:gravity="top"
-            android:hint="@string/hint_image_content" />
+            android:hint="@string/hint_image_content"
+            android:textColor="@color/black" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <Button

@@ -50,20 +50,20 @@ class DetailViewRecyclerViewAdapter(context: Context) :
                 if (it.isSuccessful) {
                     val userDTO = it.result.toObject(FollowDTO::class.java)
                     //if (userDTO?.followings != null) {
-                        firebaseFirestore
-                            .collection("images")
-                            .orderBy("timestamp", Query.Direction.DESCENDING)
-                            .addSnapshotListener { querySnapshot, firebaseFirestoreException ->
-                                contentDTOs.clear()
-                                contentUIDList.clear()
-                                if (querySnapshot == null) return@addSnapshotListener
-                                for (snapshot in querySnapshot.documents) {
-                                    val item = snapshot.toObject(ContentDTO::class.java)
-                                    contentDTOs.add(item!!)
-                                    contentUIDList.add(snapshot.id)
-                                }
-                                notifyDataSetChanged()
+                    firebaseFirestore
+                        .collection("images")
+                        .orderBy("timestamp", Query.Direction.DESCENDING)
+                        .addSnapshotListener { querySnapshot, firebaseFirestoreException ->
+                            contentDTOs.clear()
+                            contentUIDList.clear()
+                            if (querySnapshot == null) return@addSnapshotListener
+                            for (snapshot in querySnapshot.documents) {
+                                val item = snapshot.toObject(ContentDTO::class.java)
+                                contentDTOs.add(item!!)
+                                contentUIDList.add(snapshot.id)
                             }
+                            notifyDataSetChanged()
+                        }
                     //}
                 }
             }
@@ -109,6 +109,7 @@ class DetailViewRecyclerViewAdapter(context: Context) :
                         Log.d("DetailViewRecyclerView", "position $position : $url")
                         Glide.with(itemView.context)
                             .load(url)
+                            .fallback(R.drawable.ic_account)
                             .apply(
                                 RequestOptions().circleCrop()
                                     .skipMemoryCache(true)
